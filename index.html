@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo list</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="overlay overlay_active1" id="login">
+    <div class="modal">
+      <div class="modal__subtitle">Login Page</div>
+      <form class="form" action="#">
+        <label class="form__label">
+          Email
+          <input class="form__input" type="email" name="email" placeholder="Enter your email">
+        </label>
+        <label class="form__label">
+          Password
+          <input class="form__input" type="password" name="password" placeholder="Enter your password, 8 min, 12 max" minlength="8" maxlength="12">
+        </label>
+        <button class="form__button">Login</button>
+      </form>
+    </div>
+  </div> <!--конец модалки для входа на сайт-->
+
+  <div class="container">
+    <div class="todo" id="todo">
+      <h1 class="todo__title">todo list</h1>
+      <form class="add" action="#">
+        <input class="add__input" type="text" name="text" placeholder="Task" maxlength="100" required>
+        <!-- <textarea class="add__textarea" name="task" placeholder="Task" maxlength="300" required></textarea> -->
+        <button class="add__button">Add</button>
+      </form>
+      <div class="sort-panel">
+        <div class="triggers-data">
+          <div class="triggers-data__top"><img src="arrows/data-sort-top.png" alt=""></div>
+          <div class="triggers-data__bottom"><img src="arrows/data-sort-bottom.png" alt=""></div>
+        </div><!--end triggers-data-->
+        <div class="triggers-priority">
+          <div class="priority-sort__top"><img src="arrows/priority-sort-top.png" alt=""></div>
+          <span>123</span>
+          <div class="priority-sort__bottom"><img src="arrows/priority-sort-bottom.png" alt=""></div>
+        </div><!--end triggers-priority-->
+        <div class="search">
+          <div class="search__logo">
+            <img src="icons/search.png" alt="">
+          </div>
+          <form class="search-form" action="#">
+              <input class="search__input" type="text" name="search" maxlength="50">
+          </form>
+        </div><!--end search-->
+        <div class="filters-labels">
+          <div class="filters-labels__icons"><img src="icons/filter.png" alt=""></div>
+        </div><!--end filters-labels-->
+      </div><!--end sort-panel-->
+    </div> <!--конец шаблона todo страницы-->  
+  </div><!--end container-->
+
+  <div id="modal-delete">
+
+  </div> <!--конец модального окна вопроса об удалении задачи-->
+  <div id="modal-editor">
+    <!-- <form class="add" action="#">
+      <textarea class="add__textarea" name="task" placeholder="Task" maxlength="300" required></textarea>
+      <button class="add__button">Add</button>
+    </form> -->
+  </div> <!--конец модального окна изменения текста задачи-->
+  
+  <script src="main.js"></script>
+</body>
+</html>
