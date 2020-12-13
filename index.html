@@ -30,7 +30,6 @@
       <h1 class="todo__title">todo list</h1>
       <form class="add" action="#">
         <input class="add__input" type="text" name="text" placeholder="Task" maxlength="100" required>
-        <!-- <textarea class="add__textarea" name="task" placeholder="Task" maxlength="300" required></textarea> -->
         <button class="add__button">Add</button>
       </form>
       <div class="sort-panel">
@@ -55,17 +54,54 @@
           <div class="filters-labels__icons"><img src="icons/filter.png" alt=""></div>
         </div><!--end filters-labels-->
       </div><!--end sort-panel-->
+      <div class="current-task current-task_mt">
+        <div class="create-data">
+          <span>12.12.2020</br><span>13:24</span></span>
+        </div>
+        <div class="priority">
+          <div class="priority__current">1</div>
+          <div class="priority__triggers">
+            <div class="priority__top"><img src="arrows/priority-top.png" alt=""></div>
+            <div class="priority__bottom"><img src="arrows/priority-bottom.png" alt=""></div>
+          </div>
+        </div> <!--end priority-->
+        <div class="task-description task-description_active">Task for create user page</div>
+
+        <div class="editor-task">
+          <div class="icons-editor">
+            <!-- <img src="icons/pencil.png" alt=""> -->
+          </div>
+          <div class="icons-checked icons-checked_active">
+            <!-- <img src="icons/checkbox.png" alt=""> -->
+          </div>
+          <div class="icons-delete">
+            <!-- <img src="icons/trash.png" alt=""> -->
+          </div>
+        </div> <!--end editor-task-->
+      </div> <!--end current-task-->
+      <div class="current-task current-task_mt">Здесь будет следующая задача</div><!--end current-task-->
     </div> <!--конец шаблона todo страницы-->  
   </div><!--end container-->
 
-  <div id="modal-delete">
-
+  <div class="confirm confirm_active1" id="modal-delete">
+    <div class="modal-confirm">
+      <div class="modal-confirm__question">Delete task?</div>
+      <div class="buttons-block">
+        <div class="button-no">No</div>
+        <div class="button-yes button-active">Yes</div>
+      </div>
+    </div>
   </div> <!--конец модального окна вопроса об удалении задачи-->
-  <div id="modal-editor">
-    <!-- <form class="add" action="#">
-      <textarea class="add__textarea" name="task" placeholder="Task" maxlength="300" required></textarea>
-      <button class="add__button">Add</button>
-    </form> -->
+
+  <div class="editor editor_active1" id="modal-editor">
+    <div class="modal-editor">
+      <div class="modal-editor__subtitle">Delete task?</div>
+      <form class="editor-form" action="#">
+        <textarea class="editor-form__textarea" name="task" maxlength="300"></textarea>
+        <button class="editor-button">Cancel</button>
+        <button class="editor-button button-active">Save</button>
+      </form>
+    </div>
   </div> <!--конец модального окна изменения текста задачи-->
   
   <script src="main.js"></script>

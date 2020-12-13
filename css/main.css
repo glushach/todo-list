@@ -14,14 +14,14 @@ button {
   background: transparent;
   outline: none;
 }
-textarea {
+/* textarea {
   resize: vertical;
-  /* none Размеры элемента не изменяются.
+  none Размеры элемента не изменяются.
   both Можно изменять размеры элемента по горизонтали и вертикали.
   horizontal Можно изменять размеры элемента только по горизонтали.
   vertical ожно изменять размеры элемента только по вертикали.
-  inherit Наследует значение родителя. */
-}
+  inherit Наследует значение родителя.
+} */
 .container {
   position: fixed;
   top: 0;
@@ -95,12 +95,12 @@ textarea {
   padding-bottom: 30px;
 }
 .add > .add__input {
-  width: 76.5%; /*зависит от размера todo, начало 975px*/
+  width: 83.5%; /*зависит от размера todo, начало 975px*/
   height: 35px;
   line-height: 35px;
   border: none;
   border-bottom: 2px solid #6b6c6e;
-  margin-right: 65px;
+  margin-right: 28px;
 }
 .add > .add__button {
   width: 120px;
@@ -129,11 +129,10 @@ textarea {
 
 .triggers-priority {
   width: 8.8%; /*зависит от размера todo, начало 100px*/
-}
-.triggers-priority {
   text-align: center;
   color: #6b6c6e;
   font-weight: 700;
+  padding-right: 32px;
 }
 .triggers-priority > .priority-sort__top, .triggers-priority > .priority-sort__bottom {
   width: 27px;
@@ -146,7 +145,8 @@ textarea {
   height: 85%;
 }
 .search {
-  width: 52.7%; /*зависит от размера todo, начало 600px*/
+  width: 62.8%; /*зависит от размера todo, начало...*/
+  margin-right: 15px; /*зависит от размера todo, начало...*/
   height: 35px;
   display: flex;
   border-bottom: 1px solid #6b6c6e;
@@ -167,7 +167,8 @@ textarea {
   border: none;
 }
 .filters-labels {
-  width: 26.6%; /*зависит от размера todo, начало 305px*/
+  width: 17%; /*зависит от размера todo, начало...*/
+  padding-right: 30px; /*зависит от размера todo, начало...*/
 }
 .filters-labels > .filters-labels__icons {
   width: 35px;
@@ -176,3 +177,205 @@ textarea {
 .filters-labels > .filters-labels__icons > img {
   width: 100%;
 }
+
+
+
+
+
+
+
+
+
+/*БЛОК САМИХ ЗАДАЧ*/
+.current-task {
+  display: flex;
+  width: 100%;
+}
+.current-task_mt {
+  margin-top: 30px;
+}
+.create-data {
+  width: 11.9%; /*зависит от размера todo, начало 135px*/
+  text-align: center;
+  font-weight: 700;
+  font-size: 25px;
+  line-height: .8;
+}
+.create-data > span > span {
+  font-size: 18px;
+}
+.priority {
+  width: 8.8%; /*зависит от размера todo, начало 100px*/
+  display: flex;
+  justify-content: space-between;
+  padding: 0 7px;
+}
+.priority > .priority__current {
+  width: 50px;
+  height: 38px;
+  line-height: 38px;
+  text-align: center;
+  color: #ffffff;
+  font-size: 24px;
+  background: #6b6c6e;
+}
+.priority > .priority__triggers {
+  width: 18px;
+  height: 38px;
+}
+.priority > .priority__triggers > .priority__top, .priority > .priority__triggers > .priority__bottom {
+  width: 100%;
+  height: 50%;
+}
+.priority__top > img, .priority__bottom > img {
+  width: 100%;
+}
+.task-description_active {
+  background: #eeeeee;
+}
+
+
+.task-description {
+  width: 62.8%; /*зависит от размера todo, начало...*/
+  margin-right: 15px; /*зависит от размера todo, начало...*/
+  min-height: 50px; /*ВНИМАНИЕ - резиновая высота*/
+  padding-top: 14px;
+  padding-left: 11px;
+  background: #d1eef4;
+  color: #6b6c6e;
+}
+
+.task-description_active {
+  background: #eeeeee;
+}
+
+
+
+.editor-task {
+  width: 17%; /*зависит от размера todo, начало...*/
+  padding-right: 30px; /*зависит от размера todo, начало...*/
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* border: 1px solid red; */
+  border-right: 2px solid #6b6c6e;
+  
+}
+.icons-editor, .icons-checked, .icons-delete {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+.icons-editor {
+  background: #3f8c3f url('../icons/pencil.png') center center/50% no-repeat;
+}
+.icons-checked {
+  background: #77cbfb url('../icons/checkbox.png') center center/50% no-repeat;
+}
+.icons-checked_active {
+  background-color: #0097f4;
+}
+.icons-delete {
+  background: #0097f4 url('../icons/trash.png') center center/50% no-repeat;
+}
+
+/* MODAL CONFIRM */
+.confirm {
+  display: none;
+  position:fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .7);
+}
+.confirm_active {
+  display: block;
+}
+.modal-confirm {
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  min-height: 130px;
+  padding: 40px 28px 10px 28px;
+  background: #eeeeee;
+}
+.modal-confirm > .modal-confirm__question {
+  text-align: center;
+  font-size: 25px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+.buttons-block {
+  display: flex;
+  width: 100%;
+}
+.button-no, .button-yes {
+  width: 50%;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  color: #0097f4;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+
+
+
+/* Модалка  по введению текста задачи*/
+.editor {
+  display: none;
+  position:fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .7);
+}
+.editor_active {
+  display: block;
+}
+.modal-editor {
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 360px;
+  min-height: 260px;
+  padding: 10px 30px 9px 30px;
+  background: #eeeeee;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+.modal-editor > .modal-editor__subtitle {
+  margin-bottom: 5px;
+}
+.editor-form {
+  width: 100%;
+}
+.editor-form > .editor-form__textarea {
+  width: 100%;
+  height: 175px;
+  padding: 5px;
+  display: block;
+  resize: none;
+}
+.editor-button {
+  width: calc((100% - 60px)/2);
+  margin-top: 7px;
+  text-transform: uppercase;
+  color: #0097f4;
+  font-size: 18px;
+  line-height: 32px;
+}
+
+.button-active {
+  background: #0097f4;
+  color: #ffffff;
+}
+
+
+
