@@ -66,42 +66,90 @@ document.addEventListener('DOMContentLoaded', () => {
             "Shopping"
           ]
         }
-  // Очистка статичекой верстки от задач
-  taskList.innerHTML = "";
+  // Реверс массива, чтобы новые задачи отображались сверху taskList на сайте.Чем новее время, тем выше будет задача
+  const reverseArr = (arr) => {
+    arr.reverse();
+  }
+  reverseArr(taskDB.tasks);
 
-  // Вывод динамический вертки. Количество верстки зависит от количество элементов массива в объекте taskDB
-  taskDB.tasks.forEach((task, index) => {
-    taskList.innerHTML += `
-    <div class="current-task current-task_mt">
-      <div class="create-data">
-        <span>12.12.2020</br><span>13:24</span></span>
-      </div>
-      <div class="priority">
-        <div class="priority__current">1</div>
-        <div class="priority__triggers">
-          <div class="priority__top"><img src="arrows/priority-top.png" alt=""></div>
-          <div class="priority__bottom"><img src="arrows/priority-bottom.png" alt=""></div>
-        </div>
-      </div>
-      <div class="task-description task-description_active">${task}</div>
-      <div class="editor-task">
-        <div class="icons-editor">
-        </div>
-        <div class="icons-checked icons-checked_active">
-        </div>
-        <div class="icons-delete">
-        </div>
-      </div>
-    </div>
-    `;
-  });
+  function createTaskList(tasks, parent) {
+    // Очистка статичекой верстки от задач
+    parent.innerHTML = "";
 
-  //если пользователь нажал на кнопку формы
+    // Вывод динамический вертки. Количество верстки зависит от количество элементов массива в объекте taskDB
+    tasks.forEach((task, index) => {
+      parent.innerHTML += `
+      <div class="current-task current-task_mt">
+        <div class="create-data">
+          <span>12.12.2020</br><span>13:24</span></span>
+        </div>
+        <div class="priority">
+          <div class="priority__current">1</div>
+          <div class="priority__triggers">
+            <div class="priority__top"><img src="arrows/priority-top.png" alt=""></div>
+            <div class="priority__bottom"><img src="arrows/priority-bottom.png" alt=""></div>
+          </div>
+        </div>
+        
+        <div class="task-description task-description_active">${task}</div>
+        <!--<div class="editor-task">-->
+        <div class="icons-editor"></div>
+        <div class="icons-checked icons-checked_active"></div>
+        <div class="icons-delete"></div>
+        <!--</div>-->
+      </div>
+      `;
+    });
+    
+    
+    const confirm = document.querySelector('#modal-delete'),
+          buttonNo = confirm.querySelector('.button-no'),
+          buttonYes = confirm.querySelector('.button-yes'),
+          iconsDelete = taskList.querySelectorAll('.icons-delete');
+    console.log(confirm);
+
+    //Навесить корзинам в каждой задачи taskList обработчик события по удалению задачи
+    // Если после показа модалки пользователь все таки согласился удалить задачу
+    iconsDelete.forEach((btn, index) => {
+      btn.addEventListener('click', (event) => {
+        let target = event.target;
+        confirm.classList.add('confirm_active');
+        buttonYes.addEventListener('click', () => {
+          confirm.classList.remove('confirm_active');
+          target.parentElement.remove();
+          taskDB.tasks.splice(index, 1);
+        });
+
+        // Если пользователь отказался удалять задачу после показа модалки
+        buttonNo.addEventListener('click', () => {
+          confirm.classList.remove('confirm_active');
+          // target.removeEventListener('click', addEventListener);
+        });
+      });
+    });
+  } //end function createTaskList
+  createTaskList(taskDB.tasks, taskList);
+
+
+
+
+  //если пользователь нажал на кнопку формы для добавления новой задачи
   taskForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
     const newTask = taskInput.value;
 
-    taskDB.tasks.push(newTask);
+    // Дополнительная проверка, чтобы пользователь не отправил пустой value
+    if(newTask) {
+
+      taskDB.tasks.unshift(newTask);
+
+      // reverseArr(taskDB.tasks);
+
+      createTaskList(taskDB.tasks, taskList);
+    }
+
+    event.target.reset();
   });
+
 });

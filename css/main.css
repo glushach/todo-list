@@ -24,10 +24,8 @@ button {
 } */
 .container {
   display: none;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
+  width: 1140px; /*Обратить внимание при адаптации*/
+  margin: 0 auto;
 }
 .container_active {
   display: block;
@@ -87,13 +85,13 @@ button {
   color: #ffffff;
   font-size: 18px;
 }
+
+
+
+
 /*todo страница*/
 .todo {
-  position:absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 1140px; /*Обратить внимание при адаптации*/
+  width: 100%
 }
 .todo > .todo__title {
   text-transform: uppercase;
@@ -279,6 +277,7 @@ button {
   width: 38px;
   height: 38px;
   border-radius: 50%;
+  margin: 0 4px;
 }
 .icons-editor {
   background: #3f8c3f url('../icons/pencil.png') center center/50% no-repeat;
