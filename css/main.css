@@ -252,8 +252,7 @@ button {
   width: 62.8%; /*зависит от размера todo, начало...*/
   margin-right: 15px; /*зависит от размера todo, начало...*/
   min-height: 50px; /*ВНИМАНИЕ - резиновая высота*/
-  padding-top: 14px;
-  padding-left: 11px;
+  padding: 14px 11px;
   background: #d1eef4;
   color: #6b6c6e;
 }

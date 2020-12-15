@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-  //СОЗДАНИЕ ЗАДАЧИ
+  //ФУНКЦИОНАЛ ПО СОЗДАНИЮ ЗАДАЧИ
   const taskList = todoPage.querySelector('.task-list'),
         taskForm = todoPage.querySelector('#task'),
         taskInput = taskForm.querySelector('[type="text"]'),
@@ -92,16 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         
         <div class="task-description task-description_active">${task}</div>
-        <!--<div class="editor-task">-->
         <div class="icons-editor"></div>
         <div class="icons-checked icons-checked_active"></div>
         <div class="icons-delete"></div>
-        <!--</div>-->
       </div>
       `;
     });
     
-    
+    // ФУНКЦИОНАЛ ПО УДАЛЕНИЮ ЗАДАЧИ
     const confirm = document.querySelector('#modal-delete'),
           buttonNo = confirm.querySelector('.button-no'),
           buttonYes = confirm.querySelector('.button-yes'),
@@ -127,13 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }; //end
     });
 
+    
   } //end function createTaskList
   createTaskList(taskDB.tasks, taskList);
 
 
 
-
-  //если пользователь нажал на кнопку формы для добавления новой задачи
+  // ЕСЛИ ПОЛЬЗОВАТЕЛЬ НАЖАЛ НА КНОПКУ ADD ДЛЯ ДОБАВЛЕНИЯ НОВОЙ ЗАДАЧИ
   taskForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -144,12 +142,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
       taskDB.tasks.unshift(newTask);
 
-      // reverseArr(taskDB.tasks);
-
       createTaskList(taskDB.tasks, taskList);
     }
 
     event.target.reset();
+  });
+
+
+  // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
+  const editor = document.querySelector('#modal-editor'),
+  textarea = editor.querySelector('[name="task"]'),
+  buttonCancel = editor.querySelector('#cancel'),
+  buttonSave = editor.querySelector('#save'),
+  iconsEditor = document.querySelectorAll('.icons-editor');
+
+  // Навесить карандашам в каждой задачи обработчик события по редактированию задачи.
+  // Прописываем события через onclick, чтобы новое событие перекрывало старое
+  iconsEditor.forEach((btn, index) => {
+    btn.onclick = (event) => {
+    let target = event.target;
+
+    editor.classList.add('editor_active');
+
+      // Если пользователь согласился редактировать задачу
+      buttonSave.onclick = (e) => {
+        e.preventDefault();
+        
+        // e.target.reset();
+
+        // Само редактирование задачи.
+        //Сначала через event.target вычисляется родитель, а в родителе ищется елемент для изменения
+        const taskDescription = target.parentElement.querySelector('.task-description');
+        let newTextContent = textarea.value;
+        // Дополнительная проверка, чтобы пользователь не отправил пустую форму
+        // Или слишком длинные слова
+        if(newTextContent) {
+          let charArr = newTextContent.split(' ');
+          const arr = [];
+          charArr.forEach(item => {
+            item = `${item.substring(0, 15)}`;
+            arr.push(item);
+          });
+          newTextContent = arr.join(' ');
+
+
+          taskDescription.textContent = newTextContent;
+          editor.classList.remove('editor_active');
+          textarea.value = '';
+        }
+
+      };
+      // Если пользователь нажал CANCEL
+      buttonCancel.onclick = (e) => {
+        e.preventDefault();
+        editor.classList.remove('editor_active');
+      };
+    };
   });
 
 });
