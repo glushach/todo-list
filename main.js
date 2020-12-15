@@ -106,27 +106,27 @@ document.addEventListener('DOMContentLoaded', () => {
           buttonNo = confirm.querySelector('.button-no'),
           buttonYes = confirm.querySelector('.button-yes'),
           iconsDelete = taskList.querySelectorAll('.icons-delete');
-    console.log(confirm);
 
-    //Навесить корзинам в каждой задачи taskList обработчик события по удалению задачи
-    // Если после показа модалки пользователь все таки согласился удалить задачу
+    //Навесить корзинам в каждой задачи taskList обработчик события по удалению задачи. Прописываем события через onclick, чтобы новое событие перекрывало старое
     iconsDelete.forEach((btn, index) => {
-      btn.addEventListener('click', (event) => {
-        let target = event.target;
+      btn.onclick = (event) => {
+        const target = event.target;
+
         confirm.classList.add('confirm_active');
-        buttonYes.addEventListener('click', () => {
+        // Если пользователь согласился удалить задачу после показа модалки
+        buttonYes.onclick = () => {
           confirm.classList.remove('confirm_active');
           target.parentElement.remove();
           taskDB.tasks.splice(index, 1);
-        });
+        }; //end
 
         // Если пользователь отказался удалять задачу после показа модалки
-        buttonNo.addEventListener('click', () => {
+        buttonNo.onclick = () => {
           confirm.classList.remove('confirm_active');
-          // target.removeEventListener('click', addEventListener);
-        });
-      });
+        }; //end
+      }; //end
     });
+
   } //end function createTaskList
   createTaskList(taskDB.tasks, taskList);
 
