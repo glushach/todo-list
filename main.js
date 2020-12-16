@@ -200,4 +200,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   });
 
+  // ФУНКЦИОНАЛ ПО ОТМЕТКЕ ВЫПОЛНЕННЫХ ЗАДАЧ
+  const iconsChecked = taskList.querySelectorAll('.icons-checked');
+
+  // Навесить галочкам в каждой задачи обработчик события по отметке выполненности.
+  iconsChecked.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      btn.classList.remove('icons-checked_active');
+      const parent = btn.parentElement.querySelector('.task-description');
+      parent.classList.remove('task-description_active');
+    });
+  });
 });
