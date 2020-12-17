@@ -57,20 +57,22 @@ document.addEventListener('DOMContentLoaded', () => {
   //ФУНКЦИОНАЛ ПО СОЗДАНИЮ ЗАДАЧИ
   const taskList = todoPage.querySelector('.task-list'),
         taskForm = todoPage.querySelector('#task'),
-        taskInput = taskForm.querySelector('[type="text"]'),
-        taskDB = {
-          tasks: [
-            "Task for create user page",
-            "learn JS",
-            "Cooking",
-            "Shopping"
-          ]
-        }
-  // Реверс массива, чтобы новые задачи отображались сверху taskList на сайте.Чем новее время, тем выше будет задача
-  const reverseArr = (arr) => {
-    arr.reverse();
+        taskInput = taskForm.querySelector('[type="text"]');
+  //Этот массив будет сохранятся в localStorage браузера пользователя
+  let tasks = [
+    "Task for create user page",
+    "learn JS",
+    "Cooking",
+    "Shopping"
+  ];
+
+  // Запись данных пользователя в массив tasks, чтобы при обновлении браузера он не очищался
+  // Распарсивание JSON
+  if(localStorage.getItem('allTodo')) {
+    tasks = JSON.parse(localStorage.getItem('allTodo'));
+    createTaskList(tasks, taskList);
   }
-  reverseArr(taskDB.tasks);
+
 
   function createTaskList(tasks, parent) {
     // Очистка статичекой верстки от задач
@@ -98,6 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       `;
     });
+    // При каждом добавлении задачи будет обновляться localStorage
+    localStorage.setItem('allTodo', JSON.stringify(tasks));
     
     // ФУНКЦИОНАЛ ПО УДАЛЕНИЮ ЗАДАЧИ
     const confirm = document.querySelector('#modal-delete'),
@@ -115,7 +119,15 @@ document.addEventListener('DOMContentLoaded', () => {
         buttonYes.onclick = () => {
           confirm.classList.remove('confirm_active');
           target.parentElement.remove();
-          taskDB.tasks.splice(index, 1);
+          tasks.splice(index, 1);
+          // Извлечение строки из localStorage и преобразование ее в обычный массив
+          tasks = JSON.parse(localStorage.getItem('allTodo'));
+
+          // Удаление значения массива из localStorage
+          tasks.splice(index, 1);
+          // Массив трансформирутся в строку и помещается в localStorage
+          localStorage.setItem('allTodo', JSON.stringify(tasks));
+          
         }; //end
 
         // Если пользователь отказался удалять задачу после показа модалки
@@ -125,9 +137,79 @@ document.addEventListener('DOMContentLoaded', () => {
       }; //end
     });
 
-    
+
+    // ФУНКЦИОНАЛ ПО ОТМЕТКЕ ВЫПОЛНЕННЫХ ЗАДАЧ
+    const iconsChecked = taskList.querySelectorAll('.icons-checked');
+
+    // Навесить галочкам в каждой задачи обработчик события по отметке выполненности.
+    iconsChecked.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        btn.classList.remove('icons-checked_active');
+        const parent = btn.parentElement.querySelector('.task-description');
+        parent.classList.remove('task-description_active');
+      });
+    });
+
+
+    // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
+    const editor = document.querySelector('#modal-editor'),
+    textarea = editor.querySelector('[name="task"]'),
+    buttonCancel = editor.querySelector('#cancel'),
+    buttonSave = editor.querySelector('#save'),
+    iconsEditor = document.querySelectorAll('.icons-editor');
+
+    // Навесить карандашам в каждой задачи обработчик события по редактированию задачи.
+    // Прописываем события через onclick, чтобы новое событие перекрывало старое
+    iconsEditor.forEach((btn, index) => {
+      btn.onclick = (event) => {
+      let target = event.target;
+
+      editor.classList.add('editor_active');
+
+        // Если пользователь согласился редактировать задачу
+        buttonSave.onclick = (e) => {
+          e.preventDefault();
+          
+          // Само редактирование задачи.
+          //Сначала через event.target вычисляется родитель, а в родителе ищется елемент для изменения
+          const taskDescription = target.parentElement.querySelector('.task-description');
+          let newTextContent = textarea.value;
+          // Дополнительная проверка, чтобы пользователь не отправил пустую форму
+          // Или слишком длинные слова
+          if(newTextContent) {
+            let charArr = newTextContent.split(' ');
+            const arr = [];
+            charArr.forEach((item, index) => {
+              item = `${item.substring(0, 15)}`;
+              arr.push(item);
+            });
+            newTextContent = arr.join(' ');
+            taskDescription.textContent = newTextContent;
+            // Извлечение строки из localStorage и преобразование ее в обычный массив
+            tasks = JSON.parse(localStorage.getItem('allTodo'));
+
+            // Установление нового значения массива из localStorage
+            tasks[index] = taskDescription.textContent;
+            // Массив трансформирутся в строку и помещается в localStorage
+            localStorage.setItem('allTodo', JSON.stringify(tasks));
+
+
+            // Закрыть модальное окно и очистить textarea
+            editor.classList.remove('editor_active');
+            textarea.value = '';
+
+          }
+
+        };
+        // Если пользователь нажал CANCEL
+        buttonCancel.onclick = (e) => {
+          e.preventDefault();
+          editor.classList.remove('editor_active');
+        };
+      };
+    }); //end цикл iconsEditor
   } //end function createTaskList
-  createTaskList(taskDB.tasks, taskList);
+  createTaskList(tasks, taskList);
 
 
 
@@ -139,76 +221,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Дополнительная проверка, чтобы пользователь не отправил пустой value
     if(newTask) {
+      tasks.unshift(newTask);
 
-      taskDB.tasks.unshift(newTask);
+      createTaskList(tasks, taskList);
 
-      createTaskList(taskDB.tasks, taskList);
     }
 
     event.target.reset();
   });
 
 
-  // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
-  const editor = document.querySelector('#modal-editor'),
-  textarea = editor.querySelector('[name="task"]'),
-  buttonCancel = editor.querySelector('#cancel'),
-  buttonSave = editor.querySelector('#save'),
-  iconsEditor = document.querySelectorAll('.icons-editor');
-
-  // Навесить карандашам в каждой задачи обработчик события по редактированию задачи.
-  // Прописываем события через onclick, чтобы новое событие перекрывало старое
-  iconsEditor.forEach((btn, index) => {
-    btn.onclick = (event) => {
-    let target = event.target;
-
-    editor.classList.add('editor_active');
-
-      // Если пользователь согласился редактировать задачу
-      buttonSave.onclick = (e) => {
-        e.preventDefault();
-        
-        // e.target.reset();
-
-        // Само редактирование задачи.
-        //Сначала через event.target вычисляется родитель, а в родителе ищется елемент для изменения
-        const taskDescription = target.parentElement.querySelector('.task-description');
-        let newTextContent = textarea.value;
-        // Дополнительная проверка, чтобы пользователь не отправил пустую форму
-        // Или слишком длинные слова
-        if(newTextContent) {
-          let charArr = newTextContent.split(' ');
-          const arr = [];
-          charArr.forEach(item => {
-            item = `${item.substring(0, 15)}`;
-            arr.push(item);
-          });
-          newTextContent = arr.join(' ');
-
-
-          taskDescription.textContent = newTextContent;
-          editor.classList.remove('editor_active');
-          textarea.value = '';
-        }
-
-      };
-      // Если пользователь нажал CANCEL
-      buttonCancel.onclick = (e) => {
-        e.preventDefault();
-        editor.classList.remove('editor_active');
-      };
-    };
-  });
-
-  // ФУНКЦИОНАЛ ПО ОТМЕТКЕ ВЫПОЛНЕННЫХ ЗАДАЧ
-  const iconsChecked = taskList.querySelectorAll('.icons-checked');
-
-  // Навесить галочкам в каждой задачи обработчик события по отметке выполненности.
-  iconsChecked.forEach((btn, index) => {
-    btn.addEventListener('click', () => {
-      btn.classList.remove('icons-checked_active');
-      const parent = btn.parentElement.querySelector('.task-description');
-      parent.classList.remove('task-description_active');
-    });
-  });
+      
 });
+
+
+
+
