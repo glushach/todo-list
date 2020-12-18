@@ -58,49 +58,76 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskList = todoPage.querySelector('.task-list'),
         taskForm = todoPage.querySelector('#task'),
         taskInput = taskForm.querySelector('[type="text"]');
+
+  // Конструирование шаблона задачи
+  class Task {
+    // date, priority, descr, classActiv, parent
+    constructor(descr) {
+      // this.date = date;
+      // this.priority = priority;
+      this.descr = descr;
+      // this.classActiv = classActiv;
+      this.parent = parent;
+    }
+    render() {
+      taskList.innerHTML += `
+        <div class="current-task current-task_mt">
+          <div class="create-data">
+            <span>18.12.2020</br><span>13:24</span></span>
+          </div>
+          <div class="priority">
+            <div class="priority__current">1</div>
+            <div class="priority__triggers">
+              <div class="priority__top"><img src="arrows/priority-top.png" alt=""></div>
+              <div class="priority__bottom"><img src="arrows/priority-bottom.png" alt=""></div>
+            </div>
+          </div>
+          
+          <div class="task-description task-description_active">${this.descr}</div>
+          <div class="icons-editor"></div>
+          <div class="icons-checked icons-checked_active"></div>
+          <div class="icons-delete"></div>
+        </div>
+      `;
+    }
+  } //end class
+
   //Этот массив будет сохранятся в localStorage браузера пользователя
   let tasks = [
-    "Task for create user page",
-    "learn JS",
-    "Cooking",
-    "Shopping"
+    // "Task for create user page",
+    // "learn JS",
+    // "Cooking",
+    // "Shopping"
   ];
 
   // Извлечение строчного массива из JocalStorage и превращение его в JS массив
   if(localStorage.getItem('allTodo')) {
     tasks = JSON.parse(localStorage.getItem('allTodo'));
-    createTaskList(tasks, taskList);
+    createTask();
   }
 
-  // Функция, под которую подвязываются остальные функции внутреннего функционала задач
-  function createTaskList(tasks, parent) {
-    // Очистка статичекой верстки от задач
-    parent.innerHTML = "";
-
-    // Вывод динамический вертки. Количество верстки зависит от количество элементов массива в объекте tasks
-    tasks.forEach((tasks, index) => {
-      parent.innerHTML += `
-      <div class="current-task current-task_mt">
-        <div class="create-data">
-          <span>12.12.2020</br><span>13:24</span></span>
-        </div>
-        <div class="priority">
-          <div class="priority__current">1</div>
-          <div class="priority__triggers">
-            <div class="priority__top"><img src="arrows/priority-top.png" alt=""></div>
-            <div class="priority__bottom"><img src="arrows/priority-bottom.png" alt=""></div>
-          </div>
-        </div>
-        
-        <div class="task-description task-description_active">${tasks}</div>
-        <div class="icons-editor"></div>
-        <div class="icons-checked icons-checked_active"></div>
-        <div class="icons-delete"></div>
-      </div>
-      `;
+  // Динамический вывод задач. Их количество зависит от количество элементов массива tasks
+  function createTask() {
+      // Очищает предыдущий рендеринг
+      taskList.innerHTML = '';
+      // Добавление задачи и формирование нового рендеринага
+      tasks.forEach((task) => {
+      new Task(
+        task
+      ).render();
+        // Превращение JS массива в строчный и добавление его в localStorage
+      localStorage.setItem('allTodo', JSON.stringify(tasks));
     });
-    // Превращение JS массива в строчный и добавление его в localStorage
-    localStorage.setItem('allTodo', JSON.stringify(tasks));
+    
+  }
+
+
+
+    // ЕСЛИ ПОЛЬЗОВАТЕЛЬ НАЖАЛ НА КНОПКУ ADD ДЛЯ ДОБАВЛЕНИЯ НОВОЙ ЗАДАЧИ
+  // Функция-родитель для задач, под которую подвязываются функции изменения задач
+  function createTaskList() {
+    // Без этого не работает добавление новых задач
+    createTask()
 
     // Без этого после добавления задачи не работает редактирование задач
     editor();
@@ -110,26 +137,19 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteTask();
 
   } //end function createTaskList
-  createTaskList(tasks, taskList);
+  createTaskList();
 
 
-
-  // ЕСЛИ ПОЛЬЗОВАТЕЛЬ НАЖАЛ НА КНОПКУ ADD ДЛЯ ДОБАВЛЕНИЯ НОВОЙ ЗАДАЧИ
   // В коде вызывается главная функция createTaskList после каждого добавления задачи
   // Которая в свою очередь вызывает подвязанные функции под себя
   taskForm.addEventListener('submit', (event) => {
     event.preventDefault();
-
     const newTask = taskInput.value;
-
     // Дополнительная проверка, чтобы пользователь не отправил пустой value
     if(newTask) {
       tasks.unshift(newTask);
-
-      createTaskList(tasks, taskList);
-
+      createTaskList();
     }
-
     event.target.reset();
   });
 
@@ -194,8 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   editor();
 
+
+  // ФУНКЦИОНАЛ ПО УДАЛЕНИЮ ЗАДАЧИ
   function deleteTask() {
-    // ФУНКЦИОНАЛ ПО УДАЛЕНИЮ ЗАДАЧИ
     const confirm = document.querySelector('#modal-delete'),
           buttonNo = confirm.querySelector('.button-no'),
           buttonYes = confirm.querySelector('.button-yes'),
