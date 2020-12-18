@@ -66,20 +66,19 @@ document.addEventListener('DOMContentLoaded', () => {
     "Shopping"
   ];
 
-  // Запись данных пользователя в массив tasks, чтобы при обновлении браузера он не очищался
-  // Распарсивание JSON
+  // Извлечение строчного массива из JocalStorage и превращение его в JS массив
   if(localStorage.getItem('allTodo')) {
     tasks = JSON.parse(localStorage.getItem('allTodo'));
     createTaskList(tasks, taskList);
   }
 
-
+  // Функция, под которую подвязываются остальные функции внутреннего функционала задач
   function createTaskList(tasks, parent) {
     // Очистка статичекой верстки от задач
     parent.innerHTML = "";
 
-    // Вывод динамический вертки. Количество верстки зависит от количество элементов массива в объекте taskDB
-    tasks.forEach((task, index) => {
+    // Вывод динамический вертки. Количество верстки зависит от количество элементов массива в объекте tasks
+    tasks.forEach((tasks, index) => {
       parent.innerHTML += `
       <div class="current-task current-task_mt">
         <div class="create-data">
@@ -93,64 +92,49 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
         
-        <div class="task-description task-description_active">${task}</div>
+        <div class="task-description task-description_active">${tasks}</div>
         <div class="icons-editor"></div>
         <div class="icons-checked icons-checked_active"></div>
         <div class="icons-delete"></div>
       </div>
       `;
     });
-    // При каждом добавлении задачи будет обновляться localStorage
+    // Превращение JS массива в строчный и добавление его в localStorage
     localStorage.setItem('allTodo', JSON.stringify(tasks));
-    
-    // ФУНКЦИОНАЛ ПО УДАЛЕНИЮ ЗАДАЧИ
-    const confirm = document.querySelector('#modal-delete'),
-          buttonNo = confirm.querySelector('.button-no'),
-          buttonYes = confirm.querySelector('.button-yes'),
-          iconsDelete = taskList.querySelectorAll('.icons-delete');
 
-    //Навесить корзинам в каждой задачи taskList обработчик события по удалению задачи. Прописываем события через onclick, чтобы новое событие перекрывало старое
-    iconsDelete.forEach((btn, index) => {
-      btn.onclick = (event) => {
-        const target = event.target;
+    // Без этого после добавления задачи не работает редактирование задач
+    editor();
+    // Без этого после первого добавления задачи не работают чекеты
+    checked();
+    // Без этого после добавления задачи не работает удаление задач
+    deleteTask();
 
-        confirm.classList.add('confirm_active');
-        // Если пользователь согласился удалить задачу после показа модалки
-        buttonYes.onclick = () => {
-          confirm.classList.remove('confirm_active');
-          target.parentElement.remove();
-          tasks.splice(index, 1);
-          // Извлечение строки из localStorage и преобразование ее в обычный массив
-          tasks = JSON.parse(localStorage.getItem('allTodo'));
-
-          // Удаление значения массива из localStorage
-          tasks.splice(index, 1);
-          // Массив трансформирутся в строку и помещается в localStorage
-          localStorage.setItem('allTodo', JSON.stringify(tasks));
-          
-        }; //end
-
-        // Если пользователь отказался удалять задачу после показа модалки
-        buttonNo.onclick = () => {
-          confirm.classList.remove('confirm_active');
-        }; //end
-      }; //end
-    });
+  } //end function createTaskList
+  createTaskList(tasks, taskList);
 
 
-    // ФУНКЦИОНАЛ ПО ОТМЕТКЕ ВЫПОЛНЕННЫХ ЗАДАЧ
-    const iconsChecked = taskList.querySelectorAll('.icons-checked');
 
-    // Навесить галочкам в каждой задачи обработчик события по отметке выполненности.
-    iconsChecked.forEach((btn, index) => {
-      btn.addEventListener('click', () => {
-        btn.classList.remove('icons-checked_active');
-        const parent = btn.parentElement.querySelector('.task-description');
-        parent.classList.remove('task-description_active');
-      });
-    });
+  // ЕСЛИ ПОЛЬЗОВАТЕЛЬ НАЖАЛ НА КНОПКУ ADD ДЛЯ ДОБАВЛЕНИЯ НОВОЙ ЗАДАЧИ
+  // В коде вызывается главная функция createTaskList после каждого добавления задачи
+  // Которая в свою очередь вызывает подвязанные функции под себя
+  taskForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const newTask = taskInput.value;
+
+    // Дополнительная проверка, чтобы пользователь не отправил пустой value
+    if(newTask) {
+      tasks.unshift(newTask);
+
+      createTaskList(tasks, taskList);
+
+    }
+
+    event.target.reset();
+  });
 
 
+  function editor() {
     // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
     const editor = document.querySelector('#modal-editor'),
     textarea = editor.querySelector('[name="task"]'),
@@ -197,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Закрыть модальное окно и очистить textarea
             editor.classList.remove('editor_active');
             textarea.value = '';
-
           }
 
         };
@@ -208,30 +191,61 @@ document.addEventListener('DOMContentLoaded', () => {
         };
       };
     }); //end цикл iconsEditor
-  } //end function createTaskList
-  createTaskList(tasks, taskList);
+  }
+  editor();
 
+  function deleteTask() {
+    // ФУНКЦИОНАЛ ПО УДАЛЕНИЮ ЗАДАЧИ
+    const confirm = document.querySelector('#modal-delete'),
+          buttonNo = confirm.querySelector('.button-no'),
+          buttonYes = confirm.querySelector('.button-yes'),
+          iconsDelete = taskList.querySelectorAll('.icons-delete');
 
+    //Навесить корзинам в каждой задачи taskList обработчик события по удалению задачи. Прописываем события через onclick, чтобы новое событие перекрывало старое
+    iconsDelete.forEach((btn, index) => {
+      btn.onclick = (event) => {
+        const target = event.target;
 
-  // ЕСЛИ ПОЛЬЗОВАТЕЛЬ НАЖАЛ НА КНОПКУ ADD ДЛЯ ДОБАВЛЕНИЯ НОВОЙ ЗАДАЧИ
-  taskForm.addEventListener('submit', (event) => {
-    event.preventDefault();
+        confirm.classList.add('confirm_active');
+        // Если пользователь согласился удалить задачу после показа модалки
+        buttonYes.onclick = () => {
+          confirm.classList.remove('confirm_active');
+          target.parentElement.remove();
+          tasks.splice(index, 1);
+          // Извлечение строки из localStorage и преобразование ее в обычный массив
+          tasks = JSON.parse(localStorage.getItem('allTodo'));
 
-    const newTask = taskInput.value;
+          // Удаление значения массива из localStorage
+          tasks.splice(index, 1);
+          // Массив трансформирутся в строку и помещается в localStorage
+          localStorage.setItem('allTodo', JSON.stringify(tasks));
+          
+        }; //end
 
-    // Дополнительная проверка, чтобы пользователь не отправил пустой value
-    if(newTask) {
-      tasks.unshift(newTask);
+        // Если пользователь отказался удалять задачу после показа модалки
+        buttonNo.onclick = () => {
+          confirm.classList.remove('confirm_active');
+        }; //end
+      }; //end
+    });
+  }
+  deleteTask();
 
-      createTaskList(tasks, taskList);
-
-    }
-
-    event.target.reset();
-  });
-
-
+  // ФУНКЦИОНАЛ ПО ОТМЕТКЕ ВЫПОЛНЕННЫХ ЗАДАЧ
+  // Навесить галочкам и тестовому блоку в каждой задачи обработчик события по отметке выполненности.
+  function checked() {
+    const iconsChecked = taskList.querySelectorAll('.icons-checked');
+      iconsChecked.forEach((btn, index) => {
       
+      btn.addEventListener('click', () => {
+        console.log('click')
+        btn.classList.remove('icons-checked_active');
+        const parent = btn.parentElement.querySelector('.task-description');
+        parent.classList.remove('task-description_active');
+      });
+    });
+  }
+  checked();
 });
 
 
