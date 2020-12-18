@@ -1,62 +1,61 @@
 'use strict';
-document.addEventListener('DOMContentLoaded', () => {
-  // ПРОВЕРКА ЛОГИНА ВХОДА НА САЙТ
-  const formEntrance = document.querySelector('#login'),
-        labelEmail = formEntrance.querySelector('#email'),
-        addEmail = formEntrance.querySelector('[type="email"]'),
-        labelPassword = formEntrance.querySelector('#password'),
-        addPassword = formEntrance.querySelector('[type="password"]'),
-        addForm = formEntrance.querySelector('.form'),
-        email = 'testuser@todo.com',
-        password = 12345678,
-        todoPage = document.querySelector('#todo'); //участвует во всех скриптах
 
-  // подсказка пользователю
-  const emailWrong = labelEmail.querySelector('span'),
-        passwordWrong = labelPassword.querySelector('span');
+document.addEventListener('DOMContentLoaded', () => {
+  const $todoPage = document.querySelector('#todo'); //участвует в двух скриптах
+  // ПРОВЕРКА ЛОГИНА ВХОДА НА САЙТ
+  const $formEntrance = document.querySelector('#login'),
+        $labelEmail = $formEntrance.querySelector('#email'),
+        $emailWrong = $labelEmail.querySelector('span'),
+        $email = $labelEmail.querySelector('[type="email"]'),
+        $labelPassword = $formEntrance.querySelector('#password'),
+        $passwordWrong = $labelPassword.querySelector('span'),
+        $password = $labelPassword.querySelector('[type="password"]'),
+        $form = $formEntrance.querySelector('.form'),
+        email = 'testuser@todo.com',
+        password = 12345678;
 
   function showWrong(wrong, value) {
     value.addEventListener('focus', () => {
       wrong.style.opacity = 0;
     })
   }
-  showWrong(emailWrong, addEmail);
-  showWrong(passwordWrong, addPassword);
+  showWrong($emailWrong, $email);
+  showWrong($passwordWrong, $password);
 
 
   //если пользователь нажал на кнопку формы
-  addForm.addEventListener('submit', (event) => {
+  $form.addEventListener('submit', (event) => {
     event.preventDefault();
 
     // Полученние email и пароля от пользователя
-    const userEmail = addEmail.value;
-    const userPassword = +addPassword.value;
+    const userEmail = $email.value;
+    const userPassword = +$password.value;
 
     // Сравнение данных, полученных от пользователя с данными Базы Данных
     if(email === userEmail && password === userPassword) {
-      formEntrance.classList.remove('overlay_active');
-      todoPage.classList.add('container_active');
+      $formEntrance.classList.remove('overlay_active');
+      $todoPage.classList.add('container_active');
     }
 
     if(email !== userEmail) {
-      emailWrong.style.opacity = 1;
+      $emailWrong.style.opacity = 1;
     }
 
     if(password !== userPassword) {
-      passwordWrong.style.opacity = 1;
+      $passwordWrong.style.opacity = 1;
     }
 
     if(email !== userEmail && password !== userPassword) {
-      emailWrong.style.opacity = 1;
-      passwordWrong.style.opacity = 1;
+      $emailWrong.style.opacity = 1;
+      $passwordWrong.style.opacity = 1;
     }
   });
 
 
 
   //ФУНКЦИОНАЛ ПО СОЗДАНИЮ ЗАДАЧИ
-  const taskList = todoPage.querySelector('.task-list'),
-        taskForm = todoPage.querySelector('#task'),
+  const taskList = $todoPage.querySelector('.task-list'),
+        taskForm = $todoPage.querySelector('#task'),
         taskInput = taskForm.querySelector('[type="text"]');
 
   // Конструирование шаблона задачи
