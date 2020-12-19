@@ -56,24 +56,59 @@ document.addEventListener('DOMContentLoaded', () => {
   //ФУНКЦИОНАЛ ПО СОЗДАНИЮ ЗАДАЧИ
   const $taskList = $todoPage.querySelector('.task-list'), //участвует в нескольких скриптах
         $taskForm = $todoPage.querySelector('#task'),
-        $taskInput = $taskForm.querySelector('[type="text"]'); 
+        $taskInput = $taskForm.querySelector('[type="text"]');
+    let tasks = []; // c const выводит ошибку на строке 133
 
-  // Конструирование шаблона задачи
+  // При клике на ADD получение объекта от пользователя и добавление их в массив tasks
+  $taskForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const newTask = $taskInput.value;
+
+    const task = {
+      id: tasks.length,
+      date: Date.now(),
+      prior: 1,
+      text: newTask,
+      done: false
+    }
+    event.target.reset();
+    tasks.push(task) // Объект добавляется в массив tasks
+
+    // Превращение массива tasks в строчный и ДОБАВЛЕНИЕ его в localStorage
+    localStorage.setItem('allTodo', JSON.stringify(tasks));
+    createTaskList();
+  });
+  // Вспомогательная функция для генерации даты
+  function generatedDate(date) {
+    function withZero(num){
+      return num < 10 ? '0'+ num: num;
+    }
+    const pDate = new Date();
+    pDate.setTime(date);
+    const hour = withZero(pDate.getHours());
+    const min = withZero(pDate.getMinutes());
+    const day = withZero(pDate.getDate());
+    const month = withZero(pDate.getMonth() + 1);
+    const year = pDate.getFullYear();
+    return  `<span>${day}.${month}.${year}</br></span>
+            <span>${hour}:${min}</span>`;
+  }
+
+
+  // Конструирование шаблона задачи для вывода на страницу
   class Task {
     // date, priority, descr, classActiv, parent
-    constructor(descr) {
-      // this.date = date;
+    constructor(date, text) {
+      this.date = date;
       // this.priority = priority;
-      this.descr = descr;
+      this.text = text;
       // this.classActiv = classActiv;
       this.parent = parent;
     }
     render() {
       $taskList.innerHTML += `
         <div class="current-task current-task_mt">
-          <div class="create-data">
-            <span>18.12.2020</br><span>13:24</span></span>
-          </div>
+          <div class="create-data">${this.date}</div>
           <div class="priority">
             <div class="priority__current">1</div>
             <div class="priority__triggers">
@@ -82,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
           
-          <div class="task-description task-description_active">${this.descr}</div>
+          <div class="task-description task-description_active">${this.text}</div>
           <div class="icons-editor"></div>
           <div class="icons-checked icons-checked_active"></div>
           <div class="icons-delete"></div>
@@ -91,40 +126,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } //end class
 
-  //Этот массив будет сохранятся в localStorage браузера пользователя
-  let tasks = [
-    // "Task for create user page",
-    // "learn JS",
-    // "Cooking",
-    // "Shopping"
-  ];
-
-  // Извлечение строчного массива из JocalStorage и превращение его в JS массив
-  if(localStorage.getItem('allTodo')) {
-    tasks = JSON.parse(localStorage.getItem('allTodo'));
-    createTask();
-  }
-
   // Динамический вывод задач. Их количество зависит от количество элементов массива tasks
   function createTask() {
       // Очищает предыдущий рендеринг
       $taskList.innerHTML = '';
-      // Добавление задачи и формирование нового рендеринага
+      // Если в localStorage есть данные, то присвоить их массиву tasks
+      if(localStorage.getItem('allTodo')) {
+        tasks = JSON.parse(localStorage.getItem('allTodo'));
+      }
+      // Перебор массива tasks. Добавление задачи и формирование нового рендеринага
       tasks.forEach((task) => {
       new Task(
-        task
+        generatedDate(task.date),
+        task.text
       ).render();
-        // Превращение JS массива в строчный и добавление его в localStorage
-      localStorage.setItem('allTodo', JSON.stringify(tasks));
     });
-    
+    console.log('Generator')
   }
 
-
-
-    // ЕСЛИ ПОЛЬЗОВАТЕЛЬ НАЖАЛ НА КНОПКУ ADD ДЛЯ ДОБАВЛЕНИЯ НОВОЙ ЗАДАЧИ
   // Функция-родитель для задач, под которую подвязываются функции изменения задач
+  // Повторно вызывается, если пользовательножал на кнопку ADD
   function createTaskList() {
+
     // Без этого не работает добавление новых задач
     createTask()
 
@@ -135,22 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Без этого после добавления задачи не работает удаление задач
     deleteTask();
 
+    console.log("ГЛАВНАЯ")
   } //end function createTaskList
-  createTaskList();
 
 
-  // В коде вызывается главная функция createTaskList после каждого добавления задачи
-  // Которая в свою очередь вызывает подвязанные функции под себя
-  $taskForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const newTask = $taskInput.value;
-    // Дополнительная проверка, чтобы пользователь не отправил пустой value
-    if(newTask) {
-      tasks.unshift(newTask);
-      createTaskList();
-    }
-    event.target.reset();
-  });
 
     // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
   function editor() {
@@ -181,18 +192,18 @@ document.addEventListener('DOMContentLoaded', () => {
           if(newTextContent) {
             let charArr = newTextContent.split(' ');
             const arr = [];
-            charArr.forEach((item, index) => {
+            charArr.forEach((item) => {
               item = `${item.substring(0, 15)}`;
               arr.push(item);
             });
             newTextContent = arr.join(' ');
             taskDescription.textContent = newTextContent;
-            // Извлечение строки из localStorage и преобразование ее в обычный массив
+            // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
             tasks = JSON.parse(localStorage.getItem('allTodo'));
 
-            // Установление нового значения массива из localStorage
-            tasks[index] = taskDescription.textContent;
-            // Массив трансформирутся в строку и помещается в localStorage
+            // Установление нового значения объекта в массива из localStorage
+            tasks[index].text = taskDescription.textContent;
+            // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
             localStorage.setItem('allTodo', JSON.stringify(tasks));
 
 
@@ -209,8 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
         };
       };
     }); //end цикл $iconsEditor
+    console.log('editor')
   }
-  editor();
 
 
   // ФУНКЦИОНАЛ ПО УДАЛЕНИЮ ЗАДАЧИ
@@ -229,16 +240,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // Если пользователь согласился удалить задачу после показа модалки
         $buttonYes.onclick = () => {
           $confirm.classList.remove('confirm_active');
+
+          // Само удаление задачи
           target.parentElement.remove();
-          tasks.splice(index, 1);
+
           // Извлечение строки из localStorage и преобразование ее в обычный массив
           tasks = JSON.parse(localStorage.getItem('allTodo'));
-
+          console.log(tasks)
           // Удаление значения массива из localStorage
           tasks.splice(index, 1);
-          // Массив трансформирутся в строку и помещается в localStorage
+          // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
           localStorage.setItem('allTodo', JSON.stringify(tasks));
-          
+
+          location.reload() //Принудительная перезагрузка страницы
         }; //end
 
         // Если пользователь отказался удалять задачу после показа модалки
@@ -247,8 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }; //end
       }; //end
     });
-  }
-  deleteTask();
+    console.log('DeLETE');
+  } //endDeleteTask
+
+
+
 
   // ФУНКЦИОНАЛ ПО ОТМЕТКЕ ВЫПОЛНЕННЫХ ЗАДАЧ
   // Навесить галочкам и тестовому блоку в каждой задачи обработчик события по отметке выполненности.
@@ -263,8 +280,11 @@ document.addEventListener('DOMContentLoaded', () => {
         parent.classList.remove('task-description_active');
       });
     });
+    console.log('ЧЭКЕТ')
   }
-  checked();
+
+  // Вызов главной функции
+  createTaskList();
 });
 
 
