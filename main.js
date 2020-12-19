@@ -54,9 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   //ФУНКЦИОНАЛ ПО СОЗДАНИЮ ЗАДАЧИ
-  const taskList = $todoPage.querySelector('.task-list'),
-        taskForm = $todoPage.querySelector('#task'),
-        taskInput = taskForm.querySelector('[type="text"]');
+  const $taskList = $todoPage.querySelector('.task-list'), //участвует в нескольких скриптах
+        $taskForm = $todoPage.querySelector('#task'),
+        $taskInput = $taskForm.querySelector('[type="text"]'); 
 
   // Конструирование шаблона задачи
   class Task {
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.parent = parent;
     }
     render() {
-      taskList.innerHTML += `
+      $taskList.innerHTML += `
         <div class="current-task current-task_mt">
           <div class="create-data">
             <span>18.12.2020</br><span>13:24</span></span>
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Динамический вывод задач. Их количество зависит от количество элементов массива tasks
   function createTask() {
       // Очищает предыдущий рендеринг
-      taskList.innerHTML = '';
+      $taskList.innerHTML = '';
       // Добавление задачи и формирование нового рендеринага
       tasks.forEach((task) => {
       new Task(
@@ -141,9 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // В коде вызывается главная функция createTaskList после каждого добавления задачи
   // Которая в свою очередь вызывает подвязанные функции под себя
-  taskForm.addEventListener('submit', (event) => {
+  $taskForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    const newTask = taskInput.value;
+    const newTask = $taskInput.value;
     // Дополнительная проверка, чтобы пользователь не отправил пустой value
     if(newTask) {
       tasks.unshift(newTask);
@@ -216,20 +216,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ФУНКЦИОНАЛ ПО УДАЛЕНИЮ ЗАДАЧИ
   function deleteTask() {
-    const confirm = document.querySelector('#modal-delete'),
-          buttonNo = confirm.querySelector('.button-no'),
-          buttonYes = confirm.querySelector('.button-yes'),
-          iconsDelete = taskList.querySelectorAll('.icons-delete');
+    const $confirm = document.querySelector('#modal-delete'),
+          $buttonNo = $confirm.querySelector('.button-no'),
+          $buttonYes = $confirm.querySelector('.button-yes'),
+          $iconsDelete = $taskList.querySelectorAll('.icons-delete');
 
-    //Навесить корзинам в каждой задачи taskList обработчик события по удалению задачи. Прописываем события через onclick, чтобы новое событие перекрывало старое
-    iconsDelete.forEach((btn, index) => {
+    //Навесить корзинам в каждой задачи $taskList обработчик события по удалению задачи. Прописываем события через onclick, чтобы новое событие перекрывало старое
+    $iconsDelete.forEach((btn, index) => {
       btn.onclick = (event) => {
         const target = event.target;
 
-        confirm.classList.add('confirm_active');
+        $confirm.classList.add('confirm_active');
         // Если пользователь согласился удалить задачу после показа модалки
-        buttonYes.onclick = () => {
-          confirm.classList.remove('confirm_active');
+        $buttonYes.onclick = () => {
+          $confirm.classList.remove('confirm_active');
           target.parentElement.remove();
           tasks.splice(index, 1);
           // Извлечение строки из localStorage и преобразование ее в обычный массив
@@ -243,8 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }; //end
 
         // Если пользователь отказался удалять задачу после показа модалки
-        buttonNo.onclick = () => {
-          confirm.classList.remove('confirm_active');
+        $buttonNo.onclick = () => {
+          $confirm.classList.remove('confirm_active');
         }; //end
       }; //end
     });
@@ -254,8 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ФУНКЦИОНАЛ ПО ОТМЕТКЕ ВЫПОЛНЕННЫХ ЗАДАЧ
   // Навесить галочкам и тестовому блоку в каждой задачи обработчик события по отметке выполненности.
   function checked() {
-    const iconsChecked = taskList.querySelectorAll('.icons-checked');
-      iconsChecked.forEach((btn, index) => {
+    const $iconsChecked = $taskList.querySelectorAll('.icons-checked');
+      $iconsChecked.forEach((btn, index) => {
       
       btn.addEventListener('click', () => {
         console.log('click')
