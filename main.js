@@ -152,31 +152,30 @@ document.addEventListener('DOMContentLoaded', () => {
     event.target.reset();
   });
 
-
-  function editor() {
     // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
-    const editor = document.querySelector('#modal-editor'),
-    textarea = editor.querySelector('[name="task"]'),
-    buttonCancel = editor.querySelector('#cancel'),
-    buttonSave = editor.querySelector('#save'),
-    iconsEditor = document.querySelectorAll('.icons-editor');
+  function editor() {
+    const $editor = document.querySelector('#modal-editor'),
+    $textarea = $editor.querySelector('[name="task"]'),
+    $buttonCancel = $editor.querySelector('#cancel'),
+    $buttonSave = $editor.querySelector('#save'),
+    $iconsEditor = document.querySelectorAll('.icons-editor');
 
     // Навесить карандашам в каждой задачи обработчик события по редактированию задачи.
     // Прописываем события через onclick, чтобы новое событие перекрывало старое
-    iconsEditor.forEach((btn, index) => {
+    $iconsEditor.forEach((btn, index) => {
       btn.onclick = (event) => {
       let target = event.target;
 
-      editor.classList.add('editor_active');
+      $editor.classList.add('editor_active');
 
         // Если пользователь согласился редактировать задачу
-        buttonSave.onclick = (e) => {
+        $buttonSave.onclick = (e) => {
           e.preventDefault();
           
           // Само редактирование задачи.
           //Сначала через event.target вычисляется родитель, а в родителе ищется елемент для изменения
           const taskDescription = target.parentElement.querySelector('.task-description');
-          let newTextContent = textarea.value;
+          let newTextContent = $textarea.value;
           // Дополнительная проверка, чтобы пользователь не отправил пустую форму
           // Или слишком длинные слова
           if(newTextContent) {
@@ -197,19 +196,19 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('allTodo', JSON.stringify(tasks));
 
 
-            // Закрыть модальное окно и очистить textarea
-            editor.classList.remove('editor_active');
-            textarea.value = '';
+            // Закрыть модальное окно и очистить $textarea
+            $editor.classList.remove('editor_active');
+            $textarea.value = '';
           }
 
         };
         // Если пользователь нажал CANCEL
-        buttonCancel.onclick = (e) => {
+        $buttonCancel.onclick = (e) => {
           e.preventDefault();
-          editor.classList.remove('editor_active');
+          $editor.classList.remove('editor_active');
         };
       };
-    }); //end цикл iconsEditor
+    }); //end цикл $iconsEditor
   }
   editor();
 
