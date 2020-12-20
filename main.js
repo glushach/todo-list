@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Установление нового значения объекта в массива из localStorage в зависимости от условия
         if(tasks[index].done == false) {
           tasks[index].done = true;
-        } else {
+        } else if(tasks[index].done == true) {
           tasks[index].done = false;
         }
 
