@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
           localStorage.setItem('allTodo', JSON.stringify(tasks));
 
-          
+
           location.reload() //Принудительная перезагрузка страницы
         }; //end
 
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tasks[index].done = true;
         // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
         localStorage.setItem('allTodo', JSON.stringify(tasks));
-        
+        location.reload() //Принудительная перезагрузка страницы
       });
       if(tasks[index].done == true) {
           btn.classList.remove('icons-checked_active');
@@ -304,6 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }); //end цикл
     console.log('ЧЭКЕТ')
   }
+
 
   // Вызов главной функции
   createTaskList();
