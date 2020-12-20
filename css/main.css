@@ -243,9 +243,6 @@ button {
 .priority__top > img, .priority__bottom > img {
   width: 100%;
 }
-.task-description_active {
-  background: #eeeeee;
-}
 
 
 .task-description {
@@ -253,13 +250,14 @@ button {
   margin-right: 15px; /*зависит от размера todo, начало...*/
   min-height: 50px; /*ВНИМАНИЕ - резиновая высота*/
   padding: 14px 11px;
-  background: #d1eef4;
   color: #6b6c6e;
+  background: #d1eef4;
 }
 
 .task-description_active {
   background: #eeeeee;
 }
+
 
 
 
@@ -287,6 +285,10 @@ button {
 .icons-checked_active {
   background-color: #0097f4;
 }
+/* .icons-checked_none {
+  background-color:#77cbfb;
+} */
+
 .icons-delete {
   background: #0097f4 url('../icons/trash.png') center center/50% no-repeat;
 }

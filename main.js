@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
         email = 'testuser@todo.com',
         password = 12345678;
 
+
+  // Если пользователь давно не был на сайте
   function showWrong(wrong, value) {
     value.addEventListener('focus', () => {
       wrong.style.opacity = 0;
@@ -35,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(email === userEmail && password === userPassword) {
       $formEntrance.classList.remove('overlay_active');
       $todoPage.classList.add('container_active');
+      localStorage.setItem('isEntrance', true);
     }
 
     if(email !== userEmail) {
@@ -50,6 +53,15 @@ document.addEventListener('DOMContentLoaded', () => {
       $passwordWrong.style.opacity = 1;
     }
   });
+  setTimeout(() => {
+    localStorage.removeItem('isEntrance');
+  }, 14400000); //4 часа
+
+  // Если пользователь недавно входил на сайт
+  if(localStorage.getItem('isEntrance')) {
+    $formEntrance.classList.remove('overlay_active');
+    $todoPage.classList.add('container_active');
+  }
 
 
 
@@ -98,11 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Конструирование шаблона задачи для вывода на страницу
   class Task {
     // date, priority, descr, classActiv, parent
-    constructor(date, text) {
+    constructor(date, prior, text) {
       this.date = date;
-      // this.priority = priority;
+      this.prior = prior;
       this.text = text;
-      // this.classActiv = classActiv;
       this.parent = parent;
     }
     render() {
@@ -110,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="current-task current-task_mt">
           <div class="create-data">${this.date}</div>
           <div class="priority">
-            <div class="priority__current">1</div>
+            <div class="priority__current">${this.prior}</div>
             <div class="priority__triggers">
               <div class="priority__top"><img src="arrows/priority-top.png" alt=""></div>
               <div class="priority__bottom"><img src="arrows/priority-bottom.png" alt=""></div>
@@ -138,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tasks.forEach((task) => {
       new Task(
         generatedDate(task.date),
+        task.prior,
         task.text
       ).render();
     });
@@ -252,6 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
           localStorage.setItem('allTodo', JSON.stringify(tasks));
 
+          
           location.reload() //Принудительная перезагрузка страницы
         }; //end
 
@@ -271,15 +284,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Навесить галочкам и тестовому блоку в каждой задачи обработчик события по отметке выполненности.
   function checked() {
     const $iconsChecked = $taskList.querySelectorAll('.icons-checked');
+    
       $iconsChecked.forEach((btn, index) => {
-      
+      const $parent = btn.parentElement.querySelector('.task-description');
       btn.addEventListener('click', () => {
-        console.log('click')
-        btn.classList.remove('icons-checked_active');
-        const parent = btn.parentElement.querySelector('.task-description');
-        parent.classList.remove('task-description_active');
+        // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
+        tasks = JSON.parse(localStorage.getItem('allTodo'));
+
+        // Установление нового значения объекта в массива из localStorage
+        tasks[index].done = true;
+        // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
+        localStorage.setItem('allTodo', JSON.stringify(tasks));
+        
       });
-    });
+      if(tasks[index].done == true) {
+          btn.classList.remove('icons-checked_active');
+          $parent.classList.remove('task-description_active');
+        }
+    }); //end цикл
     console.log('ЧЭКЕТ')
   }
 
