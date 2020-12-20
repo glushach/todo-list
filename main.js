@@ -291,8 +291,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
         tasks = JSON.parse(localStorage.getItem('allTodo'));
 
-        // Установление нового значения объекта в массива из localStorage
-        tasks[index].done = true;
+        // Установление нового значения объекта в массива из localStorage в зависимости от условия
+        if(tasks[index].done == false) {
+          tasks[index].done = true;
+        } else {
+          tasks[index].done = false;
+        }
+
         // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
         localStorage.setItem('allTodo', JSON.stringify(tasks));
         location.reload() //Принудительная перезагрузка страницы
