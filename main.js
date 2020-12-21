@@ -163,6 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Без этого не работает добавление новых задач
     createTask()
 
+    priority()
+
     // Без этого после добавления задачи не работает редактирование задач
     editor();
     // Без этого после первого добавления задачи не работают чекеты
@@ -172,7 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log("ГЛАВНАЯ")
   } //end function createTaskList
-
 
 
     // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
@@ -294,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Установление нового значения объекта в массива из localStorage в зависимости от условия
         if(tasks[index].done == false) {
           tasks[index].done = true;
-        } else if(tasks[index].done == true) {
+        } else if(tasks[index].done == true) { //С просто else не работало в Opera
           tasks[index].done = false;
         }
 
@@ -310,7 +311,50 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('ЧЭКЕТ')
   }
 
+  // ФУНКЦИОНАЛ ПО РЕАЛИЗАЦИИ ВЫБОРА ПРИОРИТЕТОВ
+  function priority() {
+    const $prTop = $taskList.querySelectorAll('.priority__top'),
+          $prBottom = $taskList.querySelectorAll('.priority__bottom');
+    let count = 1;
+    // Функционал верхнего триггера
+      $prTop.forEach((tr, index) => {
+        tr.onclick = (event) => {
+          const target = event.target.parentElement.parentElement.parentElement.querySelector('.priority__current');
+          
+          if(count < 10) {
+            target.textContent++;
+            count++;
+          }
+          // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
+          tasks = JSON.parse(localStorage.getItem('allTodo'));
 
+          // Установление нового значения объекта в массива из localStorage
+          tasks[index].prior = target.textContent;
+          // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
+          localStorage.setItem('allTodo', JSON.stringify(tasks));
+      }; //end click
+    }) //end цикл
+  
+    // Функционал нижнего триггера
+    $prBottom.forEach((tr, index) => {
+      tr.onclick = (event) => {
+        let countReset = 1; //сброс приоритета
+        const target = event.target.parentElement.parentElement.parentElement.querySelector('.priority__current');
+        if(countReset == 1) {
+          // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
+          tasks = JSON.parse(localStorage.getItem('allTodo'));
+
+          // Установление нового значения объекта в массива из localStorage
+          tasks[index].prior = countReset;
+          // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
+          localStorage.setItem('allTodo', JSON.stringify(tasks));
+          target.textContent = countReset;
+        }
+      };
+    }) //end цикл
+
+    console.log("PRIORITY");
+  }
   // Вызов главной функции
   createTaskList();
 });
