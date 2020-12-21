@@ -315,19 +315,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function priority() {
     const $prTop = $taskList.querySelectorAll('.priority__top'),
           $prBottom = $taskList.querySelectorAll('.priority__bottom');
-    let count = 1;
+
     // Функционал верхнего триггера
       $prTop.forEach((tr, index) => {
         tr.onclick = (event) => {
           const target = event.target.parentElement.parentElement.parentElement.querySelector('.priority__current');
-          
-          if(count < 10) {
+          if(+target.textContent < 10) {
             target.textContent++;
-            count++;
           }
           // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
           tasks = JSON.parse(localStorage.getItem('allTodo'));
-
           // Установление нового значения объекта в массива из localStorage
           tasks[index].prior = target.textContent;
           // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
@@ -338,18 +335,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Функционал нижнего триггера
     $prBottom.forEach((tr, index) => {
       tr.onclick = (event) => {
-        let countReset = 1; //сброс приоритета
         const target = event.target.parentElement.parentElement.parentElement.querySelector('.priority__current');
-        if(countReset == 1) {
-          // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
-          tasks = JSON.parse(localStorage.getItem('allTodo'));
-
-          // Установление нового значения объекта в массива из localStorage
-          tasks[index].prior = countReset;
-          // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
-          localStorage.setItem('allTodo', JSON.stringify(tasks));
-          target.textContent = countReset;
+        if(+target.textContent > 0) {
+          target.textContent--;
         }
+        // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
+        tasks = JSON.parse(localStorage.getItem('allTodo'));
+        // Установление нового значения объекта в массива из localStorage
+        tasks[index].prior = target.textContent;
+        // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
+        localStorage.setItem('allTodo', JSON.stringify(tasks));
       };
     }) //end цикл
 
