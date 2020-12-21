@@ -390,7 +390,35 @@ document.addEventListener('DOMContentLoaded', () => {
     sortPr($prBottom);
   // ФУНКЦИОНАЛ СОРТИРОВКИ ПО ВЫПОЛНЕННОСТИ ЗАДАЧ
   const $filter = $sortPanel.querySelector('.filters-labels__icons');
-  console.log($filter);
+  $filter.onclick = () => {
+    // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
+    tasks = JSON.parse(localStorage.getItem('allTodo'));
+    tasks.sort((a, b) => a.done - b.done);
+    // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
+    localStorage.setItem('allTodo', JSON.stringify(tasks));
+    location.reload(); //Принудительная перезагрузка страницы
+  };
+
+  // РЕАЛИЗАЦИЯ ПОСКОВОЙ СТРОКИ
+  $sortPanel.querySelector('.search__input').oninput = function() {
+    let val = this.value.trim(); //trim - обрезает пробелы у вводимых данных
+    let valLower = val.toLowerCase();
+    console.log(valLower);
+    let elasticItem = document.querySelectorAll('.current-task');
+    if(val) {
+      elasticItem.forEach((elem) => {
+        if(elem.innerText.search(val) == -1) {
+          elem.style.display = 'none';
+        } else {
+          elem.style.display = 'flex';
+        }
+      });
+    } else {
+        elasticItem.forEach((elem) => {
+          elem.style.display = 'flex';
+      });
+    }
+  }
   // Вызов главной функции
   createTaskList();
 });
