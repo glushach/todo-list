@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
         password = 12345678;
 
 
-  // Если пользователь давно не был на сайте
   function showWrong(wrong, value) {
     value.addEventListener('focus', () => {
       wrong.style.opacity = 0;
@@ -53,11 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
       $passwordWrong.style.opacity = 1;
     }
   });
-  setTimeout(() => {
-    localStorage.removeItem('isEntrance');
-  }, 14400000); //4 часа
 
-  // Если пользователь недавно входил на сайт
+  // Если пользователь зашел на сайт
   if(localStorage.getItem('isEntrance')) {
     $formEntrance.classList.remove('overlay_active');
     $todoPage.classList.add('container_active');
@@ -69,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const $taskList = $todoPage.querySelector('.task-list'), //участвует в нескольких скриптах
         $taskForm = $todoPage.querySelector('#task'),
         $taskInput = $taskForm.querySelector('[type="text"]');
-    let tasks = []; // c const выводит ошибку на строке 133
+    let tasks = []; // c const выводит ошибку на строке 141
 
   // При клике на ADD получение объекта от пользователя и добавление их в массив tasks
   $taskForm.addEventListener('submit', (event) => {
@@ -77,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const newTask = $taskInput.value;
 
     const task = {
-      id: tasks.length,
       date: Date.now(),
       prior: 1,
       text: newTask,
@@ -141,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function createTask() {
       // Очищает предыдущий рендеринг
       $taskList.innerHTML = '';
-      // Если в localStorage есть данные, то присвоить их массиву tasks
+      // Если в localStorage есть ключ allTodo, то присвоить его значение массиву tasks
       if(localStorage.getItem('allTodo')) {
         tasks = JSON.parse(localStorage.getItem('allTodo'));
       }
@@ -266,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('allTodo', JSON.stringify(tasks));
 
 
-          location.reload() //Принудительная перезагрузка страницы
+          location.reload(); //Принудительная перезагрузка страницы
         }; //end
 
         // Если пользователь отказался удалять задачу после показа модалки
@@ -301,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
         localStorage.setItem('allTodo', JSON.stringify(tasks));
-        location.reload() //Принудительная перезагрузка страницы
+        location.reload(); //Принудительная перезагрузка страницы
       });
       if(tasks[index].done == true) {
           btn.classList.remove('icons-checked_active');
@@ -326,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
           tasks = JSON.parse(localStorage.getItem('allTodo'));
           // Установление нового значения объекта в массива из localStorage
-          tasks[index].prior = target.textContent;
+          tasks[index].prior = +target.textContent;
           // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
           localStorage.setItem('allTodo', JSON.stringify(tasks));
       }; //end click
@@ -342,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
         tasks = JSON.parse(localStorage.getItem('allTodo'));
         // Установление нового значения объекта в массива из localStorage
-        tasks[index].prior = target.textContent;
+        tasks[index].prior = +target.textContent;
         // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
         localStorage.setItem('allTodo', JSON.stringify(tasks));
       };
@@ -350,6 +345,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log("PRIORITY");
   }
+  // ФУНКЦИОНАЛ СОРТИРОВКИ ПО ДАТЕ.
+  const $sortPanel = document.querySelector('.sort-panel'),
+        $dateNew = $sortPanel.querySelector('.triggers-data__top'),
+        $dateOld = $sortPanel.querySelector('.triggers-data__bottom'),
+        $prReset = $sortPanel.querySelector('.priority-sort__reset');
+    function sortDate(triggers) {
+      triggers.onclick = () => {
+      // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
+      tasks = JSON.parse(localStorage.getItem('allTodo'));
+      // Установление нового значения объекта в массива из localStorage
+      if(triggers == $dateNew) {
+        tasks.sort((a, b) => b.date - a.date);
+      } else if($dateOld || $prReset) {
+        tasks.sort((a, b) => a.date - b.date);
+      }
+      // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
+      localStorage.setItem('allTodo', JSON.stringify(tasks));
+      location.reload(); //Принудительная перезагрузка страницы
+    }
+  }
+  sortDate($dateNew);
+  sortDate($dateOld);
+  sortDate($prReset);
+  //ФУНКЦИОНАЛ СОРТИРОВКИ ПО ПРИОРИТЕТУ
+  const $prTop = $sortPanel.querySelector('.priority-sort__top'),
+        $prBottom = $sortPanel.querySelector('.priority-sort__bottom');
+    function sortPr(triggers) {
+      triggers.onclick = () => {
+        // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
+      tasks = JSON.parse(localStorage.getItem('allTodo'));
+      // Установление нового значения объекта в массива из localStorage
+      if(triggers == $prTop) {
+        tasks.sort((a, b) => b.prior - a.prior);
+      } else if($prBottom) {
+        tasks.sort((a, b) => a.prior - b.prior);
+      }
+      // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
+      localStorage.setItem('allTodo', JSON.stringify(tasks));
+      location.reload(); //Принудительная перезагрузка страницы
+      }
+    }
+    sortPr($prTop);
+    sortPr($prBottom);
+  // ФУНКЦИОНАЛ СОРТИРОВКИ ПО ВЫПОЛНЕННОСТИ ЗАДАЧ
+  const $filter = $sortPanel.querySelector('.filters-labels__icons');
+  console.log($filter);
   // Вызов главной функции
   createTaskList();
 });
