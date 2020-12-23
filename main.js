@@ -68,9 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
         App = {
           tasks: []
         };
-  
+
   function addStorage() {
-    // Превращение массива tasks в строчный и ДОБАВЛЕНИЕ его в localStorage
+   // Превращение массива tasks в строчный и ДОБАВЛЕНИЕ его в localStorage
     localStorage.setItem('allTodo', JSON.stringify(App.tasks));
   }
   function getStorage() {
@@ -93,13 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
         done: false
       };
       event.target.reset();
-      App.tasks.push(task); // Объект добавляется в массив tasks
+      App.tasks.unshift(task); // Объект добавляется в массив tasks
       addStorage();
       createTask();
     } else {
       alert('Empty task text!');
     }
   });
+  
   // Вспомогательная функция для генерации даты
   function generatedDate(date) {
     function withZero(num){
@@ -168,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
+  // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
   function editor() {
     const $editor = document.querySelector('#modal-editor'),
     $textarea = $editor.querySelector('[name="task"]'),
@@ -185,7 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
       $editor.classList.add('editor_active');
       // Вывод старого контента в техтарею
       getStorage();
-      $textarea.value = App.tasks[index].text;
+      if(App.tasks[index].text) {//Без проверки иногда была ошибка
+        $textarea.value = App.tasks[index].text;
+      }
       
       //Сначала через event.target вычисляется родитель, а в родителе ищется елемент для изменения
       const taskDescription = target.parentElement.querySelector('.task-description');
@@ -195,24 +198,19 @@ document.addEventListener('DOMContentLoaded', () => {
           // Само редактирование задачи.
           let newTextContent = $textarea.value;
           // Дополнительная проверка, чтобы пользователь не отправил пустую форму
-          // Или слишком длинные слова
           if(newTextContent) {
-            let charArr = newTextContent.split(' ');
-            const arr = [];
-            charArr.forEach((item) => {
+              // Обрезание слишком длинных слов в предложении
+              let charArr = newTextContent.split(' ');
+              const arr = [];
+              charArr.forEach((item) => {
               item = `${item.substring(0, 15)}`;
               arr.push(item);
-            });
-            newTextContent = arr.join(' ');
-            taskDescription.textContent = newTextContent;
-
+              });
+              newTextContent = arr.join(' ');
+              taskDescription.textContent = newTextContent;
             getStorage();
-
-            // Установление нового значения объекта в массива из localStorage
             App.tasks[index].text = taskDescription.textContent;
             addStorage();
-
-
             // Закрыть модальное окно и очистить $textarea
             $editor.classList.remove('editor_active');
             $textarea.value = '';
@@ -278,9 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if(App.tasks[index].done == true) { //С просто else не работало в Opera
           App.tasks[index].done = false;
         }
-
         addStorage();
-        // location.reload(); //Принудительная перезагрузка страницы
         createTask();
       });
       if(App.tasks[index].done == true) {
@@ -304,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
             target.textContent++;
           }
           getStorage();
-          // Установление нового значения объекта в массива из localStorage
           App.tasks[index].prior = +target.textContent;
           addStorage();
       }; //end click
@@ -318,7 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
           target.textContent--;
         }
         getStorage();
-        // Установление нового значения объекта в массива из localStorage
         App.tasks[index].prior = +target.textContent;
         addStorage();
       };
@@ -333,7 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function sortDate(triggers) {
       triggers.onclick = () => {
         getStorage();
-      // Установление нового значения объекта в массива из localStorage
       if(triggers == $dateNew) {
         App.tasks.sort((a, b) => b.date - a.date);
       } else if($dateOld || $prReset) {
@@ -352,7 +345,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function sortPr(triggers) {
       triggers.onclick = () => {
         getStorage();
-        // Установление нового значения объекта в массива из localStorage
         if(triggers == $prTop) {
           App.tasks.sort((a, b) => b.prior - a.prior);
         } else if($prBottom) {
