@@ -14,12 +14,12 @@
       <form class="form" action="#">
         <label class="form__label" id="email">
           Email
-          <input class="form__input" type="email" name="email" placeholder="Enter your email">
+          <input class="form__input" type="email" name="email" placeholder="Enter your email" autocomplete="on">
           <span>Wrong email</span>
         </label>
         <label class="form__label" id="password">
           Password
-          <input class="form__input" type="password" name="password" placeholder="Enter your password, 8 min, 12 max" minlength="8" maxlength="12">
+          <input class="form__input" type="password" name="password" placeholder="Enter your password, 8 min, 12 max" minlength="8" maxlength="12" autocomplete="on">
           <span>Wrong password</span>
         </label>
         <button class="form__button">Login</button>
@@ -31,7 +31,7 @@
     <div class="todo">
       <h1 class="todo__title">todo list</h1>
       <form class="add" action="#" id="task">
-        <input class="add__input" type="text" name="text" placeholder="Task" maxlength="70" required>
+        <input class="add__input" type="text" name="text" placeholder="Task" maxlength="70" required autocomplete="on">
         <button class="add__button">Add</button>
       </form>
       <div class="sort-panel">
@@ -49,7 +49,7 @@
             <img src="icons/search.png" alt="">
           </div>
           <form class="search-form" action="#">
-              <input class="search__input" type="text" name="search" maxlength="50">
+              <input class="search__input" type="text" name="search" maxlength="50" autocomplete="on">
           </form>
         </div><!--end search-->
         <div class="filters-labels">
