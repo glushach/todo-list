@@ -157,7 +157,7 @@ button {
   cursor: pointer;
 }
 .priority-sort__reset:hover {
-  color: red;
+  color: #77cbfb;
   cursor: pointer;
 }
 .search {

@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-  //ФУНКЦИОНАЛ ПО СОЗДАНИЮ ЗАДАЧИ
+  //ФУНКЦИОНАЛ ПО СОЗДАНИЮ ЗАДАЧИ И ДОБАВЛЕНИЮ ЗАДАЧИ
   const $taskList = $todoPage.querySelector('.task-list'), //участвует в нескольких скриптах
         $taskForm = $todoPage.querySelector('#task'),
         $taskInput = $taskForm.querySelector('[type="text"]'),
@@ -94,9 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       event.target.reset();
       App.tasks.push(task); // Объект добавляется в массив tasks
-
       addStorage();
-      createTaskList();
+      createTask();
     } else {
       alert('Empty task text!');
     }
@@ -160,27 +159,13 @@ document.addEventListener('DOMContentLoaded', () => {
         task.text
       ).render();
     });
-    console.log('Generator');
-  }
-
-  // Функция-родитель для задач, под которую подвязываются функции изменения задач
-  // Повторно вызывается, если пользовательножал на кнопку ADD
-  function createTaskList() {
-
-    // Без этого не работает добавление новых задач
-    createTask();
-
     priority();
-
-    // Без этого после добавления задачи не работает редактирование задач
     editor();
-    // Без этого после первого добавления задачи не работают чекеты
     checked();
-    // Без этого после добавления задачи не работает удаление задач
     deleteTask();
+  }
+  createTask();
 
-    console.log("ГЛАВНАЯ");
-  } //end function createTaskList
 
 
     // ФУНКЦИОНАЛ ПО РЕДАКТИРОВАНИЮ ЗАДАЧИ
@@ -204,7 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
       //Сначала через event.target вычисляется родитель, а в родителе ищется елемент для изменения
       const taskDescription = target.parentElement.querySelector('.task-description');
-          console.log(taskDescription);
         // Если пользователь согласился редактировать задачу
         $buttonSave.onclick = (e) => {
           e.preventDefault();
@@ -242,8 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
       };
     }); //end цикл $iconsEditor
-    console.log('editor');
-  }
+  } //end fn
 
 
   // ФУНКЦИОНАЛ ПО УДАЛЕНИЮ ЗАДАЧИ
@@ -262,17 +245,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Если пользователь согласился удалить задачу после показа модалки
         $buttonYes.onclick = () => {
           $confirm.classList.remove('confirm_active');
-
-          // Само удаление задачи
-          target.parentElement.remove();
+          target.parentElement.remove(); // Само удаление задачи
 
           getStorage();
-          // Удаление значения массива из localStorage
-          App.tasks.splice(index, 1);
+          App.tasks.splice(index, 1); // Удаление значения массива из localStorage
           addStorage();
-
-
-          location.reload(); //Принудительная перезагрузка страницы
         }; //end
 
         // Если пользователь отказался удалять задачу после показа модалки
@@ -281,9 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }; //end
       }; //end
     });
-    console.log('DeLETE');
-  } //endDeleteTask
-
+  } //end fn
 
 
 
@@ -305,14 +280,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         addStorage();
-        location.reload(); //Принудительная перезагрузка страницы
+        // location.reload(); //Принудительная перезагрузка страницы
+        createTask();
       });
       if(App.tasks[index].done == true) {
           btn.classList.remove('icons-checked_active');
           $parent.classList.remove('task-description_active');
         }
+        
     }); //end цикл
-    console.log('ЧЭКЕТ');
   }
 
   // ФУНКЦИОНАЛ ПО РЕАЛИЗАЦИИ ВЫБОРА ПРИОРИТЕТОВ
@@ -347,9 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
         addStorage();
       };
     }); //end цикл
+  } //end fn
 
-    console.log("PRIORITY");
-  }
   // ФУНКЦИОНАЛ СОРТИРОВКИ ПО ДАТЕ.
   const $sortPanel = document.querySelector('.sort-panel'),
         $dateNew = $sortPanel.querySelector('.triggers-data__top'),
@@ -364,8 +339,8 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if($dateOld || $prReset) {
         App.tasks.sort((a, b) => a.date - b.date);
       }
-      // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
       addStorage();
+      createTask();
     };
   }
   sortDate($dateNew);
@@ -383,9 +358,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if($prBottom) {
           App.tasks.sort((a, b) => a.prior - b.prior);
         }
-        // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
         addStorage();
-        location.reload(); //Принудительная перезагрузка страницы
+        createTask();
       };
     }
     sortPr($prTop);
@@ -395,16 +369,14 @@ document.addEventListener('DOMContentLoaded', () => {
   $filter.onclick = () => {
     getStorage();
     App.tasks.sort((a, b) => a.done - b.done);
-    // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
     addStorage();
-    location.reload(); //Принудительная перезагрузка страницы
+    createTask();
   };
 
   // РЕАЛИЗАЦИЯ ПОСКОВОЙ СТРОКИ
   $sortPanel.querySelector('.search__input').oninput = function() {
     let val = this.value.trim(); //trim - обрезает пробелы у вводимых данных
     let valLower = val.toLowerCase();
-    console.log(valLower);
     let elasticItem = document.querySelectorAll('.current-task');
     if(val) {
       elasticItem.forEach((elem) => {
@@ -420,8 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   };
-  // Вызов главной функции
-  createTaskList();
 });
 
 
