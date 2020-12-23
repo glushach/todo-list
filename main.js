@@ -376,7 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // РЕАЛИЗАЦИЯ ПОСКОВОЙ СТРОКИ
   $sortPanel.querySelector('.search__input').oninput = function() {
     let val = this.value.trim(); //trim - обрезает пробелы у вводимых данных
-    let valLower = val.toLowerCase();
     let elasticItem = document.querySelectorAll('.current-task');
     if(val) {
       elasticItem.forEach((elem) => {
