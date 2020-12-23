@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function showWrong(wrong, value) {
     value.addEventListener('focus', () => {
       wrong.style.opacity = 0;
-    })
+    });
   }
   showWrong($emailWrong, $email);
   showWrong($passwordWrong, $password);
@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $taskInput = $taskForm.querySelector('[type="text"]');
     let tasks = []; // c const выводит ошибку на строке 141
 
+
   // При клике на ADD получение объекта от пользователя и добавление их в массив tasks
   $taskForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -77,9 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
       prior: 1,
       text: newTask,
       done: false
-    }
+    };
     event.target.reset();
-    tasks.push(task) // Объект добавляется в массив tasks
+    tasks.push(task); // Объект добавляется в массив tasks
 
     // Превращение массива tasks в строчный и ДОБАВЛЕНИЕ его в localStorage
     localStorage.setItem('allTodo', JSON.stringify(tasks));
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         task.text
       ).render();
     });
-    console.log('Generator')
+    console.log('Generator');
   }
 
   // Функция-родитель для задач, под которую подвязываются функции изменения задач
@@ -156,9 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function createTaskList() {
 
     // Без этого не работает добавление новых задач
-    createTask()
+    createTask();
 
-    priority()
+    priority();
 
     // Без этого после добавления задачи не работает редактирование задач
     editor();
@@ -167,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Без этого после добавления задачи не работает удаление задач
     deleteTask();
 
-    console.log("ГЛАВНАЯ")
+    console.log("ГЛАВНАЯ");
   } //end function createTaskList
 
 
@@ -186,14 +187,18 @@ document.addEventListener('DOMContentLoaded', () => {
       let target = event.target;
 
       $editor.classList.add('editor_active');
-
+      // Вывод старого контента в техтарею
+      tasks = JSON.parse(localStorage.getItem('allTodo'));
+      console.log(tasks);
+      $textarea.value = tasks[index].text;
+      
+      //Сначала через event.target вычисляется родитель, а в родителе ищется елемент для изменения
+      const taskDescription = target.parentElement.querySelector('.task-description');
+          console.log(taskDescription);
         // Если пользователь согласился редактировать задачу
         $buttonSave.onclick = (e) => {
           e.preventDefault();
-          
           // Само редактирование задачи.
-          //Сначала через event.target вычисляется родитель, а в родителе ищется елемент для изменения
-          const taskDescription = target.parentElement.querySelector('.task-description');
           let newTextContent = $textarea.value;
           // Дополнительная проверка, чтобы пользователь не отправил пустую форму
           // Или слишком длинные слова
@@ -206,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             newTextContent = arr.join(' ');
             taskDescription.textContent = newTextContent;
+            
             // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
             tasks = JSON.parse(localStorage.getItem('allTodo'));
 
@@ -228,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
       };
     }); //end цикл $iconsEditor
-    console.log('editor')
+    console.log('editor');
   }
 
 
@@ -254,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // Извлечение строки из localStorage и преобразование ее в обычный массив
           tasks = JSON.parse(localStorage.getItem('allTodo'));
-          console.log(tasks)
+          console.log(tasks);
           // Удаление значения массива из localStorage
           tasks.splice(index, 1);
           // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
@@ -303,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
           $parent.classList.remove('task-description_active');
         }
     }); //end цикл
-    console.log('ЧЭКЕТ')
+    console.log('ЧЭКЕТ');
   }
 
   // ФУНКЦИОНАЛ ПО РЕАЛИЗАЦИИ ВЫБОРА ПРИОРИТЕТОВ
@@ -325,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
           localStorage.setItem('allTodo', JSON.stringify(tasks));
       }; //end click
-    }) //end цикл
+    }); //end цикл
   
     // Функционал нижнего триггера
     $prBottom.forEach((tr, index) => {
@@ -341,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
         localStorage.setItem('allTodo', JSON.stringify(tasks));
       };
-    }) //end цикл
+    }); //end цикл
 
     console.log("PRIORITY");
   }
@@ -363,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
       localStorage.setItem('allTodo', JSON.stringify(tasks));
       location.reload(); //Принудительная перезагрузка страницы
-    }
+    };
   }
   sortDate($dateNew);
   sortDate($dateOld);
@@ -384,7 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
       localStorage.setItem('allTodo', JSON.stringify(tasks));
       location.reload(); //Принудительная перезагрузка страницы
-      }
+      };
     }
     sortPr($prTop);
     sortPr($prBottom);
@@ -418,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
           elem.style.display = 'flex';
       });
     }
-  }
+  };
   // Вызов главной функции
   createTaskList();
 });
