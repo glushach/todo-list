@@ -68,25 +68,38 @@ document.addEventListener('DOMContentLoaded', () => {
         App = {
           tasks: []
         };
-
+  
+  function addStorage() {
+    // Превращение массива tasks в строчный и ДОБАВЛЕНИЕ его в localStorage
+    localStorage.setItem('allTodo', JSON.stringify(App.tasks));
+  }
+  function getStorage() {
+    // Если в localStorage есть ключ allTodo, то присвоить его значение массиву tasks
+    if(localStorage.getItem('allTodo')) {
+      App.tasks = JSON.parse(localStorage.getItem('allTodo'));
+    }
+  }
 
   // При клике на ADD получение объекта от пользователя и добавление их в массив tasks
   $taskForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    const newTask = $taskInput.value;
+    if($taskInput.value) {
+      const newTask = $taskInput.value;
 
-    const task = {
-      date: Date.now(),
-      prior: 1,
-      text: newTask,
-      done: false
-    };
-    event.target.reset();
-    App.tasks.push(task); // Объект добавляется в массив tasks
+      const task = {
+        date: Date.now(),
+        prior: 1,
+        text: newTask,
+        done: false
+      };
+      event.target.reset();
+      App.tasks.push(task); // Объект добавляется в массив tasks
 
-    // Превращение массива tasks в строчный и ДОБАВЛЕНИЕ его в localStorage
-    localStorage.setItem('allTodo', JSON.stringify(App.tasks));
-    createTaskList();
+      addStorage();
+      createTaskList();
+    } else {
+      alert('Empty task text!');
+    }
   });
   // Вспомогательная функция для генерации даты
   function generatedDate(date) {
@@ -107,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Конструирование шаблона задачи для вывода на страницу
   class Task {
-    // date, priority, descr, classActiv, parent
     constructor(date, prior, text) {
       this.date = date;
       this.prior = prior;
@@ -139,10 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function createTask() {
       // Очищает предыдущий рендеринг
       $taskList.innerHTML = '';
-      // Если в localStorage есть ключ allTodo, то присвоить его значение массиву tasks
-      if(localStorage.getItem('allTodo')) {
-        App.tasks = JSON.parse(localStorage.getItem('allTodo'));
-      }
+      getStorage();
       // Перебор массива tasks. Добавление задачи и формирование нового рендеринага
       App.tasks.forEach((task) => {
       new Task(
@@ -190,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       $editor.classList.add('editor_active');
       // Вывод старого контента в техтарею
-      App.tasks = JSON.parse(localStorage.getItem('allTodo'));
+      getStorage();
       $textarea.value = App.tasks[index].text;
       
       //Сначала через event.target вычисляется родитель, а в родителе ищется елемент для изменения
@@ -213,13 +222,11 @@ document.addEventListener('DOMContentLoaded', () => {
             newTextContent = arr.join(' ');
             taskDescription.textContent = newTextContent;
 
-            // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
-            App.tasks = JSON.parse(localStorage.getItem('allTodo'));
+            getStorage();
 
             // Установление нового значения объекта в массива из localStorage
             App.tasks[index].text = taskDescription.textContent;
-            // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
-            localStorage.setItem('allTodo', JSON.stringify(App.tasks));
+            addStorage();
 
 
             // Закрыть модальное окно и очистить $textarea
@@ -259,12 +266,10 @@ document.addEventListener('DOMContentLoaded', () => {
           // Само удаление задачи
           target.parentElement.remove();
 
-          // Извлечение строки из localStorage и преобразование ее в обычный массив
-          App.tasks = JSON.parse(localStorage.getItem('allTodo'));
+          getStorage();
           // Удаление значения массива из localStorage
           App.tasks.splice(index, 1);
-          // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
-          localStorage.setItem('allTodo', JSON.stringify(App.tasks));
+          addStorage();
 
 
           location.reload(); //Принудительная перезагрузка страницы
@@ -290,8 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $iconsChecked.forEach((btn, index) => {
       const $parent = btn.parentElement.querySelector('.task-description');
       btn.addEventListener('click', () => {
-        // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
-        App.tasks = JSON.parse(localStorage.getItem('allTodo'));
+        getStorage();
 
         // Установление нового значения объекта в массива из localStorage в зависимости от условия
         if(App.tasks[index].done == false) {
@@ -300,8 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
           App.tasks[index].done = false;
         }
 
-        // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
-        localStorage.setItem('allTodo', JSON.stringify(App.tasks));
+        addStorage();
         location.reload(); //Принудительная перезагрузка страницы
       });
       if(App.tasks[index].done == true) {
@@ -324,12 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if(+target.textContent < 10) {
             target.textContent++;
           }
-          // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
-          App.tasks = JSON.parse(localStorage.getItem('allTodo'));
+          getStorage();
           // Установление нового значения объекта в массива из localStorage
           App.tasks[index].prior = +target.textContent;
-          // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
-          localStorage.setItem('allTodo', JSON.stringify(App.tasks));
+          addStorage();
       }; //end click
     }); //end цикл
   
@@ -340,12 +341,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if(+target.textContent > 1) {
           target.textContent--;
         }
-        // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
-        App.tasks = JSON.parse(localStorage.getItem('allTodo'));
+        getStorage();
         // Установление нового значения объекта в массива из localStorage
         App.tasks[index].prior = +target.textContent;
-        // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
-        localStorage.setItem('allTodo', JSON.stringify(App.tasks));
+        addStorage();
       };
     }); //end цикл
 
@@ -358,8 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $prReset = $sortPanel.querySelector('.priority-sort__reset');
     function sortDate(triggers) {
       triggers.onclick = () => {
-      // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
-      App.tasks = JSON.parse(localStorage.getItem('allTodo'));
+        getStorage();
       // Установление нового значения объекта в массива из localStorage
       if(triggers == $dateNew) {
         App.tasks.sort((a, b) => b.date - a.date);
@@ -367,8 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         App.tasks.sort((a, b) => a.date - b.date);
       }
       // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
-      localStorage.setItem('allTodo', JSON.stringify(App.tasks));
-      location.reload(); //Принудительная перезагрузка страницы
+      addStorage();
     };
   }
   sortDate($dateNew);
@@ -379,17 +376,16 @@ document.addEventListener('DOMContentLoaded', () => {
         $prBottom = $sortPanel.querySelector('.priority-sort__bottom');
     function sortPr(triggers) {
       triggers.onclick = () => {
-        // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
-      App.tasks = JSON.parse(localStorage.getItem('allTodo'));
-      // Установление нового значения объекта в массива из localStorage
-      if(triggers == $prTop) {
-        App.tasks.sort((a, b) => b.prior - a.prior);
-      } else if($prBottom) {
-        App.tasks.sort((a, b) => a.prior - b.prior);
-      }
-      // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
-      localStorage.setItem('allTodo', JSON.stringify(App.tasks));
-      location.reload(); //Принудительная перезагрузка страницы
+        getStorage();
+        // Установление нового значения объекта в массива из localStorage
+        if(triggers == $prTop) {
+          App.tasks.sort((a, b) => b.prior - a.prior);
+        } else if($prBottom) {
+          App.tasks.sort((a, b) => a.prior - b.prior);
+        }
+        // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
+        addStorage();
+        location.reload(); //Принудительная перезагрузка страницы
       };
     }
     sortPr($prTop);
@@ -397,11 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ФУНКЦИОНАЛ СОРТИРОВКИ ПО ВЫПОЛНЕННОСТИ ЗАДАЧ
   const $filter = $sortPanel.querySelector('.filters-labels__icons');
   $filter.onclick = () => {
-    // Извлечение массива-строки из localStorage и преобразование ее в обычный массив
-    App.tasks = JSON.parse(localStorage.getItem('allTodo'));
+    getStorage();
     App.tasks.sort((a, b) => a.done - b.done);
     // Массив трансформирутся в строку и ОБНОВЛЯЕТСЯ localStorage
-    localStorage.setItem('allTodo', JSON.stringify(App.tasks));
+    addStorage();
     location.reload(); //Принудительная перезагрузка страницы
   };
 
