@@ -22,14 +22,7 @@ button {
   vertical ожно изменять размеры элемента только по вертикали.
   inherit Наследует значение родителя.
 } */
-.container {
-  display: none;
-  width: 1140px; /*Обратить внимание при адаптации*/
-  margin: 0 auto;
-}
-.container_active {
-  display: block;
-}
+
 /*Модалка для входа на сайт*/
 .overlay {
   display: none;
@@ -90,9 +83,19 @@ button {
 
 
 /*todo страница*/
+.container {
+  display: none;
+  width: 1140px; /*Обратить внимание при адаптации*/
+  margin: 0 auto;
+}
+.container_active {
+  display: block;
+}
 .todo {
   width: 100%
 }
+
+
 .todo > .todo__title {
   text-transform: uppercase;
   text-align: center;
@@ -119,6 +122,8 @@ button {
   color: #ffffff;
   cursor: pointer;
 }
+
+
 /* ПАНЕЛЬ СОРТИРОВКА*/
 .sort-panel {
   display: flex;
@@ -303,6 +308,10 @@ button {
   background: #0097f4 url('../icons/trash.png') center center/50% no-repeat;
 }
 
+
+
+
+
 /* MODAL CONFIRM */
 .confirm {
   display: none;
@@ -348,7 +357,7 @@ button {
 
 
 
-/* Модалка  по введению текста задачи*/
+/* Модалка  по редактированию текста задачи*/
 .editor {
   display: none;
   position:fixed;
